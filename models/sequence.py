@@ -5,7 +5,7 @@ class Sequence:
     zero = None
     one  = None
 
-    def __init__(self: 'Sequence', prefix: List[int], repeat: List[int]):
+    def __init__(self, prefix: List[int], repeat: List[int]) -> None:
         self.prefix = prefix
         self.repeat = repeat if len(repeat) > 0 else [0]
         self.normalize()
@@ -15,19 +15,19 @@ class Sequence:
             self.prefix = self.prefix[:-1]
             self.repeat = self.repeat[-1:]+self.repeat[:-1]
 
-    def __eq__(self: 'Sequence', other: 'Sequence') -> bool:
+    def __eq__(self, other: 'Sequence') -> bool:
         return self.prefix == other.prefix and self.repeat == other.repeat
 
     def prefixed_by(self, additional_prefix: List[int]) -> 'Sequence':
         return Sequence(additional_prefix + self.prefix, self.repeat)
 
     # Returns finite prefixes of length n of the sequence
-    def finite_prefix(self: 'Sequence', n: int) -> List[int]:
+    def finite_prefix(self, n: int) -> List[int]:
         k = ceil((n - len(self.prefix))/len(self.repeat))
         return (self.prefix + k*self.repeat)[:n]
 
     # Returns a generator that iterates the sequence
-    def generator(self: 'Sequence') -> Iterator[int]:
+    def generator(self) -> Iterator[int]:
         for element in self.prefix:
             yield element
         while True:
