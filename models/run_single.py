@@ -1,11 +1,9 @@
-from random import shuffle
 from models.sequence import Sequence
 
 def run_single(deck, ai, turns):
     copied_deck = deck[:]
 
     # TODO: allow mulligan
-    shuffle(copied_deck)
     hand = copied_deck[0:7]
     remaining = copied_deck[7:]
     gold = 0
