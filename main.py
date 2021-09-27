@@ -33,7 +33,7 @@ x,y = [2,2]
 fig, axs = plt.subplots(y,x)
 mana_by_turn = []
 for i,(ax,(template_name,deck)) in enumerate(zip(axs.flat, decks)):
-    experiment = Experiment(deck=deck, ai=AI.less_naive, turns=10, repeats=20000, options={ 'variance_reduction': 'antithetic-variates' })
+    experiment = Experiment(deck=deck, ai=AI.less_naive, turns=10, repeats=30000, options={ 'variance_reduction': 'antithetic-variates' })
     metrics = [Metric.minimum_mana(turn+1) for turn in range(experiment.turns)]
     results = experiment.evaluate(metrics)
     xs = list([turn+1 for turn in range(experiment.turns)])
