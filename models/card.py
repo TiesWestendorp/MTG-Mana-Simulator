@@ -16,16 +16,15 @@ class Card:
 
     @staticmethod
     def untapped_rock(cost, mana):
-        return Card(land=False, cost=cost, mana_sequence=Sequence([], [mana]))
+        return Card(cost=cost, mana_sequence=Sequence.repeat(mana))
     @staticmethod
     def tapped_rock(cost, mana):
-        return Card(land=False, cost=cost, mana_sequence=Sequence([0], [mana]))
+        return Card(cost=cost, mana_sequence=Sequence.repeat(mana).prefixed_by([0]))
+    @staticmethod
+    def draw_spell(cost, cards):
+        return Card(cost=cost, draw_sequence=Sequence.once(1))
 
 Card.untapped_land = Card(land=True, mana_sequence=Sequence.one)
 Card.tapped_land   = Card(land=True, mana_sequence=Sequence.one.prefixed_by([0]))
-Card.cantrip       = Card(cost=1,    draw_sequence=Sequence.once(1))
+Card.cantrip       = Card.draw_spell(1, 1)
 Card.filler        = Card(cost=float('inf'))
-
-# Some examples:
-# dark_ritual = Card("Dark Ritual", cost=1, mana_sequence=Sequence([3], []))
-# bounty_of_the_luxa = Card("Bounty of the Luxa", cost=4, mana_sequence=Sequence([0], [0, 3]), draw_sequence=Sequence([], [0, 1]))

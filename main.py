@@ -1,13 +1,18 @@
 from models import AI, Card, Experiment, Metric, Sequence
 
-lands = 38*[Card.untapped_land]
-ramp_package = []
-ramp_package += 4*[Card.untapped_rock(2, 1)] # Signets/Talismans
-ramp_package += 4*[Card.untapped_rock(3, 1)] # Lockets/Keyrunes
-draw_package = []
-draw_package += 3*[Card.cantrip]
-draw_package += 1*[Card("Divination",    cost=3, draw_sequence=Sequence.once(2))]
-draw_package += [Card("Phyrexian Arena", cost=3, draw_sequence=Sequence.one.prefixed_by([0]))]
+dark_ritual        = Card("Dark Ritual", cost=1, mana_sequence=Sequence.once(3))
+elf                = Card.tapped_rock(1, 1)
+sign_in_blood      = Card.draw_spell(2, 2)
+talisman           = Card.untapped_rock(2, 1)
+divination         = Card.draw_spell(3, 2)
+locket             = Card.untapped_rock(3, 1)
+phyrexian_arena    = Card("Phyrexian Arena", cost=3, draw_sequence=Sequence.one.prefixed_by([0]))
+smothering_tithe   = Card("Smothering Tithe", cost=4, gold_sequence=Sequence.repeat(3).prefixed_by([0]))
+bounty_of_the_luxa = Card("Bounty of the Luxa", cost=4, mana_sequence=Sequence([0], [0, 3]), draw_sequence=Sequence([], [0, 1]))
+
+lands        = 38*[Card.untapped_land]
+ramp_package = 3*[elf] + 4*[talisman] + 4*[locket] + [bounty_of_the_luxa]
+draw_package = 4*[Card.cantrip] + [sign_in_blood, divination, phyrexian_arena]
 
 decks = []
 decks.append(["x ramp, x card draw", lands[:]])
@@ -33,7 +38,7 @@ for i,(ax,(template_name,deck)) in enumerate(zip(axs.flat, decks)):
         print("  - {}: {}".format(name, values))
         ax.plot(xs, values, label=name)
     print()
-    mana_equals_turns = list(experiment.evaluate([Metric.minimum_turn_mana()]).values())[0]
+    mana_equals_turns = list(experiment.evaluate([Metric.minimum_turn_mana]).values())[0]
     mana_by_turn.append(mana_equals_turns)
     ax.plot(xs, mana_equals_turns, 'g--', label="≥'turn' mana")
     ax.set_xticks([turn+1 for turn in range(experiment.turns)])
