@@ -2,28 +2,18 @@ from models import AI, Card, Experiment, Metric, Sequence
 
 decks = []
 
-# Template 1
-deck = []
-deck += 6*[Card.tapped_land]
-deck += 30*[Card.untapped_land]
-deck += 4*[Card.untapped_rock(2, 1)] # Signets/Talismans
-deck += 4*[Card.untapped_rock(3, 1)] # Lockets/Keyrunes
-deck += 1*[Card.untapped_rock(4, 2)] # Hedron Archive
-deck += (99-len(deck))*[Card.filler]
-decks.append(["Standard", deck])
-
 # Template 2 (https://mtgdecks.net/Commander/imperio-elfico-decklist-by-rauryson-1157822)
-deck = []
-deck += 5*[Card.tapped_land]
-deck += 25*[Card.untapped_land]
-deck += 7*[Card.tapped_rock(1, 1)] # Fyndhorn Elves/Llanowar Elves/Arbor Elf/Elvish Mystic/Deathrite Shaman/Elves of Deep Shadow/Gnarlroot Trapper
-deck += 1*[Card.tapped_rock(2, 1)] # Incubation Druid
-deck += 1*[Card.tapped_rock(3, 3)] # Elvish Archdruid
-deck += 1*[Card.tapped_rock(3, 1)] # Marwyn, the Nurturer
-deck += 2*[Card.tapped_rock(4, 3)] # Canopy Tactician/Wirewood Channeler
-deck += 1*[Card("Elvish Visionary", False, 2, draw_sequence=Sequence.once(1))]
-deck += (99-len(deck))*[Card.filler]
-decks.append(["cEDH elves", deck])
+#deck = []
+#deck += 5*[Card.tapped_land]
+#deck += 25*[Card.untapped_land]
+#deck += 7*[Card.tapped_rock(1, 1)] # Fyndhorn Elves/Llanowar Elves/Arbor Elf/Elvish Mystic/Deathrite Shaman/Elves of Deep Shadow/Gnarlroot Trapper
+#deck += 1*[Card.tapped_rock(2, 1)] # Incubation Druid
+#deck += 1*[Card.tapped_rock(3, 3)] # Elvish Archdruid
+#deck += 1*[Card.tapped_rock(3, 1)] # Marwyn, the Nurturer
+#deck += 2*[Card.tapped_rock(4, 3)] # Canopy Tactician/Wirewood Channeler
+#deck += 1*[Card("Elvish Visionary", False, 2, draw_sequence=Sequence.once(1))]
+#deck += (99-len(deck))*[Card.filler]
+#decks.append(["cEDH elves", deck])
 
 # Template 3
 #deck = []
@@ -37,22 +27,31 @@ decks.append(["cEDH elves", deck])
 #deck += (99-len(deck))*[Card.filler]
 #decks.append(["Lands", deck])
 
-# Template 4
-deck = []
-deck += 8*[Card.tapped_land]
-deck += 30*[Card.untapped_land]
-deck += (99-len(deck))*[Card.filler]
-decks.append(["No ramp", deck])
+lands = 38*[Card.untapped_land]
+ramp_package = []
+ramp_package += 4*[Card.untapped_rock(2, 1)] # Signets/Talismans
+ramp_package += 4*[Card.untapped_rock(3, 1)] # Lockets/Keyrunes
+draw_package = []
+draw_package += 3*[Card.cantrip]
+draw_package += 2*[Card("Divination", False, 3, draw_sequence=Sequence.once(2))]
+draw_package += [Card("Phyrexian Arena", False, 3, draw_sequence=Sequence.one.prefixed_by([0]))]
 
-deck = []
-deck += 8*[Card.tapped_land]
-deck += 30*[Card.untapped_land]
-deck += 6*[Card.cantrip]
-deck += 1*[Card("Divination",      False, 3,  draw_sequence=Sequence.once(2))]
-deck += 1*[Card("Phyrexian Arena", False, 3,  draw_sequence=Sequence.one.prefixed_by([0]))]
-deck += 1*[Card("Smothering Tithe", False, 4, gold_sequence=Sequence.repeat(3).prefixed_by([0]))]
+# Template 4
+deck = lands
 deck += (99-len(deck))*[Card.filler]
-decks.append(["No ramp (card draw)", deck])
+decks.append(["X ramp, X card draw", deck])
+
+deck = lands + draw_package
+deck += (99-len(deck))*[Card.filler]
+decks.append(["X ramp, ✓ card draw", deck])
+
+deck = lands + ramp_package
+deck += (99-len(deck))*[Card.filler]
+decks.append(["✓ ramp, X card draw", deck])
+
+deck = lands + ramp_package + draw_package
+deck += (99-len(deck))*[Card.filler]
+decks.append(["✓ ramp, ✓ card draw", deck])
 
 import numpy as np
 import matplotlib.pyplot as plt

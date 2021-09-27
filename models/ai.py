@@ -1,3 +1,5 @@
+from models.sequence import Sequence
+
 class AI:
     naive = None
 
@@ -18,10 +20,15 @@ def improved_land_choice(context):
     if len(almost_playables) > 0 and len(untapped_lands) > 0:
         return choice(untapped_lands)
 
-    # Otherwise, if there are any non-lands, play them
-    nonlands = [k for k in playable_cards if not hand[k].land]
-    if len(nonlands) > 0:
-        return choice(nonlands)
+    # Otherwise, if there are any ramp spells, play them
+    ramp = [k for k in playable_cards if hand[k].mana_sequence != Sequence.zero or hand[k].gold_sequence != Sequence.zero]
+    if len(ramp) > 0:
+        return choice(ramp)
+
+    # Otherwise, if there are any draw spells, play them
+    draw = [k for k in playable_cards if hand[k].draw_sequence != Sequence.zero]
+    if len(draw) > 0:
+        return choice(draw)
 
     # Otherwise, play randomly (tapped lands)
     return naive_choice(context)
