@@ -6,7 +6,7 @@ ramp_package += 4*[Card.untapped_rock(2, 1)] # Signets/Talismans
 ramp_package += 4*[Card.untapped_rock(3, 1)] # Lockets/Keyrunes
 draw_package = []
 draw_package += 3*[Card.cantrip]
-draw_package += 2*[Card("Divination",    cost=3, draw_sequence=Sequence.once(2))]
+draw_package += 1*[Card("Divination",    cost=3, draw_sequence=Sequence.once(2))]
 draw_package += [Card("Phyrexian Arena", cost=3, draw_sequence=Sequence.one.prefixed_by([0]))]
 
 decks = []
