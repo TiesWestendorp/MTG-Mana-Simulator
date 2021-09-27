@@ -6,9 +6,14 @@ class Sequence:
     one  = None
 
     def __init__(self: 'Sequence', prefix: List[int], repeat: List[int]):
-        # TODO: 'sequence normal form', e.g. Sequence.one == Sequence([1], [1])
         self.prefix = prefix
         self.repeat = repeat if len(repeat) > 0 else [0]
+        self.normalize()
+
+    def normalize(self):
+        while len(self.prefix) > 0 and self.prefix[-1] == self.repeat[-1]:
+            self.prefix = self.prefix[:-1]
+            self.repeat = self.repeat[-1:]+self.repeat[:-1]
 
     def __eq__(self: 'Sequence', other: 'Sequence') -> bool:
         return self.prefix == other.prefix and self.repeat == other.repeat
