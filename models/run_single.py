@@ -63,6 +63,7 @@ def run_single(deck, ai, turns):
             # TODO: implement land search
 
             # Available mana on this turn may have increased after playing a card
+            # TODO: 'consider the max mana to be gained from playing a land this turn (but don't play it)'
             max_on_turn = max(mana + gold, max_on_turn)
 
         mana_per_turn[turn] = max_on_turn
