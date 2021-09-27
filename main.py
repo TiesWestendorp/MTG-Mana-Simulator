@@ -10,22 +10,13 @@ draw_package += 1*[Card("Divination",    cost=3, draw_sequence=Sequence.once(2))
 draw_package += [Card("Phyrexian Arena", cost=3, draw_sequence=Sequence.one.prefixed_by([0]))]
 
 decks = []
+decks.append(["x ramp, x card draw", lands[:]])
+decks.append(["x ramp, ✓ card draw", lands[:] + draw_package[:]])
+decks.append(["✓ ramp, x card draw", lands[:] + ramp_package[:]])
+decks.append(["✓ ramp, ✓ card draw", lands[:] + ramp_package[:] + draw_package[:]])
 
-deck = lands
-deck += (99-len(deck))*[Card.filler]
-decks.append(["x ramp, x card draw", deck])
-
-deck = lands + draw_package
-deck += (99-len(deck))*[Card.filler]
-decks.append(["x ramp, ✓ card draw", deck])
-
-deck = lands + ramp_package
-deck += (99-len(deck))*[Card.filler]
-decks.append(["✓ ramp, x card draw", deck])
-
-deck = lands + ramp_package + draw_package
-deck += (99-len(deck))*[Card.filler]
-decks.append(["✓ ramp, ✓ card draw", deck])
+for _,deck in decks:
+    deck += (99-len(deck))*[Card.filler]
 
 import numpy as np
 import matplotlib.pyplot as plt
