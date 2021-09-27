@@ -13,15 +13,15 @@ decks = []
 
 deck = lands
 deck += (99-len(deck))*[Card.filler]
-decks.append(["X ramp, X card draw", deck])
+decks.append(["x ramp, x card draw", deck])
 
 deck = lands + draw_package
 deck += (99-len(deck))*[Card.filler]
-decks.append(["X ramp, ✓ card draw", deck])
+decks.append(["x ramp, ✓ card draw", deck])
 
 deck = lands + ramp_package
 deck += (99-len(deck))*[Card.filler]
-decks.append(["✓ ramp, X card draw", deck])
+decks.append(["✓ ramp, x card draw", deck])
 
 deck = lands + ramp_package + draw_package
 deck += (99-len(deck))*[Card.filler]

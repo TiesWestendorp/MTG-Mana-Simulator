@@ -26,7 +26,7 @@ def run_single(deck, ai, turns):
 
         # Consider the max mana to be gained from playing a land this turn (but don't play it)
         max_mana_from_land = max([0]+[card.mana_sequence.finite_prefix(1)[0] for card in hand if card.land])
-        max_on_turn = mana + max_mana_from_land + gold
+        max_on_turn = mana + gold + max_mana_from_land
 
         if len(hand) > 0:
             unplayables_per_turn[turn] = sum([1 for card in hand if card.cost > max_on_turn and not card.land])/len(hand)
@@ -35,7 +35,7 @@ def run_single(deck, ai, turns):
 
         # Until there's nothing left to do, or the AI stops playing
         while True:
-            playable_cards = [k for k,card in enumerate(hand) if card.cost <= mana+gold and not (land_for_turn and card.land)]
+            playable_cards = [k for k,card in enumerate(hand) if (not card.land and card.cost <= mana+gold) or (card.land and not land_for_turn)]
             if len(playable_cards) == 0:
                 break
 
@@ -63,8 +63,8 @@ def run_single(deck, ai, turns):
             # TODO: implement land search
 
             # Available mana on this turn may have increased after playing a card
-            # TODO: 'consider the max mana to be gained from playing a land this turn (but don't play it)'
-            max_on_turn = max(mana + gold, max_on_turn)
+            max_mana_from_land = max([0]+[card.mana_sequence.finite_prefix(1)[0] for card in hand if card.land and not land_for_turn])
+            max_on_turn = max(mana + gold + max_mana_from_land, max_on_turn)
 
         mana_per_turn[turn] = max_on_turn
     return mana_per_turn
