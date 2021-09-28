@@ -11,8 +11,11 @@ class Metric:
         return [self.func(turn+1, manas_by_turn) for turn,manas_by_turn in enumerate(zip(*traces))]
 
     @staticmethod
-    def minimum_mana(min_mana):
+    def minimum_mana(min_mana: int):
         return Metric("≥{} mana".format(min_mana), lambda turn,manas_by_turn: sum(mana >= min_mana for mana in manas_by_turn)/len(manas_by_turn))
+    @staticmethod
+    def percentile(p: float):
+        return Metric("{}th percentile".format(p), lambda turn,manas_by_turn: sorted(manas_by_turn)[round(len(manas_by_turn)*p)-1])
 
 from statistics import mean, median, mode
 Metric.mean   = Metric("Mean",   lambda turn,manas_by_turn: mean(manas_by_turn))

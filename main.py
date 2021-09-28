@@ -1,4 +1,8 @@
 from models import AI, Card, Experiment, Metric, Sequence
+ai = AI.naive
+turns = 10
+repeats = 20000
+options = { 'variance_reduction': 'antithetic-variates' }
 
 dark_ritual        = Card("Dark Ritual", cost=1, mana_sequence=Sequence.once(3))
 elf                = Card.tapped_rock(1, 1)
@@ -26,45 +30,49 @@ for _,deck in decks:
 import numpy as np
 import matplotlib.pyplot as plt
 x,y = [2,2]
+xs = list([turn+1 for turn in range(turns)])
+
+experiments = [Experiment(deck=deck, ai=ai, turns=turns, repeats=repeats, options=options) for _,deck in decks]
+metrics = [Metric.minimum_mana(turn+1) for turn in range(turns)] + [Metric.minimum_turn_mana]
+percentiles = [Metric.mean, Metric.percentile(0.001), Metric.percentile(0.25), Metric.percentile(0.5), Metric.percentile(0.75), Metric.percentile(1.0)]
+
 fig, axs = plt.subplots(y,x)
-mana_by_turn = []
-averages = []
-for i,(ax,(template_name,deck)) in enumerate(zip(axs.flat, decks)):
-    experiment = Experiment(deck=deck, ai=AI.naive, turns=10, repeats=30000, options={ 'variance_reduction': 'antithetic-variates' })
-    metrics = [Metric.minimum_mana(turn+1) for turn in range(experiment.turns)]
-    results = experiment.evaluate(metrics)
-    xs = list([turn+1 for turn in range(experiment.turns)])
-    for name,values in results.items():
-        ax.plot(xs, values, label=name)
-    mana_equals_turns = list(experiment.evaluate([Metric.minimum_turn_mana]).values())[0]
-    averages.append(list(experiment.evaluate([Metric.mean]).values())[0])
-    mana_by_turn.append(mana_equals_turns)
-    ax.plot(xs, mana_equals_turns, 'g--', label="≥'turn' mana")
-    ax.set_xticks([turn+1 for turn in range(experiment.turns)])
+for i,(ax,(name,_),experiment) in enumerate(zip(axs.flat, decks, experiments)):
+    for j,(metric,values) in enumerate(experiment.evaluate(metrics).items()):
+        if j<len(metrics)-1:
+            ax.plot(xs, values, label=metric)
+        else:
+            ax.plot(xs, values, 'g--', label=metric)
     if i%2 == 0:
         ax.set(ylabel='Probability')
     if i>=x*(y-1):
         ax.set(xlabel='Turns')
-    ax.set_title(template_name)
-axs.flat[-1].legend(loc=1, prop={'size': 4})
+    ax.set_title(name)
+    ax.set_xticks([turn+1 for turn in range(turns)])
+    ax.legend(loc=2, prop={'size': 4})
 plt.tight_layout()
 plt.show()
 
-for (template_name, _), res in zip(decks, mana_by_turn):
-    plt.plot(xs, res, label=template_name)
-    print(template_name, "\t{}\n".format(list(map(lambda x: round(x, 3), res))))
-plt.xlabel('Turns')
-plt.ylabel('Probability')
-plt.xticks([turn+1 for turn in range(experiment.turns)])
-plt.ylim([0, 1])
-plt.legend(loc=1, prop={'size': 6})
+for (name,deck),values in zip(decks, [list(experiment.evaluate([Metric.minimum_turn_mana]).values())[0] for experiment in experiments]):
+    plt.plot(xs, values, label=name)
+plt.legend(loc=3, prop={'size': 6})
 plt.show()
 
-for (template_name, _), res in zip(decks, averages):
-    plt.plot(xs, res, label=template_name)
-    print(template_name, "\t{}\n".format(list(map(lambda x: round(x, 3), res))))
-plt.xlabel('Turns')
-plt.ylabel('Average mana')
-plt.xticks([turn+1 for turn in range(experiment.turns)])
-plt.legend(loc=1, prop={'size': 6})
+for (name,deck),values in zip(decks, [list(experiment.evaluate([Metric.mean]).values())[0] for experiment in experiments]):
+    plt.plot(xs, values, label=name)
+plt.legend(loc=2, prop={'size': 6})
+plt.show()
+
+fig, axs = plt.subplots(y,x)
+for i,(ax,(name, _),experiment) in enumerate(zip(axs.flat, decks, experiments)):
+    for metric,values in experiment.evaluate(percentiles).items():
+        ax.plot(xs, values, label=metric)
+    if i%2 == 0:
+        ax.set(ylabel='Mana')
+    if i>=x*(y-1):
+        ax.set(xlabel='Turns')
+    ax.set_title(name)
+    ax.set_xticks([turn+1 for turn in range(turns)])
+    ax.legend(loc=2, prop={'size': 4})
+plt.tight_layout()
 plt.show()
