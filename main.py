@@ -28,17 +28,16 @@ import matplotlib.pyplot as plt
 x,y = [2,2]
 fig, axs = plt.subplots(y,x)
 mana_by_turn = []
+averages = []
 for i,(ax,(template_name,deck)) in enumerate(zip(axs.flat, decks)):
-    experiment = Experiment(deck=deck, ai=AI.less_naive, turns=10, repeats=30000, options={ 'variance_reduction': 'antithetic-variates' })
+    experiment = Experiment(deck=deck, ai=AI.naive, turns=10, repeats=30000, options={ 'variance_reduction': 'antithetic-variates' })
     metrics = [Metric.minimum_mana(turn+1) for turn in range(experiment.turns)]
     results = experiment.evaluate(metrics)
     xs = list([turn+1 for turn in range(experiment.turns)])
-    print(template_name)
     for name,values in results.items():
-        print("  - {}: {}".format(name, values))
         ax.plot(xs, values, label=name)
-    print()
     mana_equals_turns = list(experiment.evaluate([Metric.minimum_turn_mana]).values())[0]
+    averages.append(list(experiment.evaluate([Metric.mean]).values())[0])
     mana_by_turn.append(mana_equals_turns)
     ax.plot(xs, mana_equals_turns, 'g--', label="≥'turn' mana")
     ax.set_xticks([turn+1 for turn in range(experiment.turns)])
@@ -53,9 +52,19 @@ plt.show()
 
 for (template_name, _), res in zip(decks, mana_by_turn):
     plt.plot(xs, res, label=template_name)
+    print(template_name, "\t{}\n".format(list(map(lambda x: round(x, 3), res))))
 plt.xlabel('Turns')
 plt.ylabel('Probability')
 plt.xticks([turn+1 for turn in range(experiment.turns)])
 plt.ylim([0, 1])
+plt.legend(loc=1, prop={'size': 6})
+plt.show()
+
+for (template_name, _), res in zip(decks, averages):
+    plt.plot(xs, res, label=template_name)
+    print(template_name, "\t{}\n".format(list(map(lambda x: round(x, 3), res))))
+plt.xlabel('Turns')
+plt.ylabel('Average mana')
+plt.xticks([turn+1 for turn in range(experiment.turns)])
 plt.legend(loc=1, prop={'size': 6})
 plt.show()

@@ -12,7 +12,6 @@ def run_single(deck, ai, turns):
     gold_generators = []
 
     mana_per_turn = turns*[None]
-    unplayables_per_turn = turns*[None]
     for turn in range(turns):
         # Allow playing a single land per turn
         land_for_turn = False
@@ -24,14 +23,7 @@ def run_single(deck, ai, turns):
         mana  = sum([generator.__next__() for generator in mana_generators]) # Tap everything for mana
         gold += sum([generator.__next__() for generator in gold_generators]) # Create gold
 
-        # Consider the max mana to be gained from playing a land this turn (but don't play it)
-        max_mana_from_land = max([0]+[card.mana_sequence.finite_prefix(1)[0] for card in hand if card.land])
-        max_on_turn = mana + gold + max_mana_from_land
-
-        if len(hand) > 0:
-            unplayables_per_turn[turn] = sum([1 for card in hand if card.cost > max_on_turn and not card.land])/len(hand)
-        else:
-            unplayables_per_turn[turn] = 0.0
+        mana_per_turn[turn] = max_attainable_mana({'hand': hand, 'mana': mana, 'gold': gold, 'land_for_turn': land_for_turn})
 
         # Until there's nothing left to do, or the AI stops playing
         while True:
@@ -40,11 +32,12 @@ def run_single(deck, ai, turns):
                 break
 
             # Let AI choose a card
-            chosen = ai.choose({'hand': hand, 'playable_cards': playable_cards, 'mana': mana, 'gold': gold, 'land_for_turn': land_for_turn})
+            chosen = ai.choose({'turn': turn+1, 'hand': hand, 'playable_cards': playable_cards, 'mana': mana, 'gold': gold, 'land_for_turn': land_for_turn})
             if chosen not in playable_cards:
                 break
 
             # Play chosen card
+            # TODO: implement land search
             card = hand.pop(chosen)
             mana_generator = card.mana_sequence.generator()
             draw_generator = card.draw_sequence.generator()
@@ -56,15 +49,28 @@ def run_single(deck, ai, turns):
             land_for_turn = land_for_turn or card.land # Disable land play if it was a land
             gold += gold_generator.__next__() - min([gold, max([0, card.cost-mana])]) # Pay appropriate gold
             mana += mana_generator.__next__() - min([mana, card.cost])                # Pay appropriate mana
+            draw = draw_generator.__next__()
 
-            for _ in range(draw_generator.__next__()):
+            for _ in range(draw):
                 hand.append(remaining.pop()) # Draw appropriate amount of cards
-
-            # TODO: implement land search
-
-            # Available mana on this turn may have increased after playing a card
-            max_mana_from_land = max([0]+[card.mana_sequence.finite_prefix(1)[0] for card in hand if card.land and not land_for_turn])
-            max_on_turn = max(mana + gold + max_mana_from_land, max_on_turn)
-
-        mana_per_turn[turn] = max_on_turn
+            if draw > 0:
+                # Maximum attainable mana may have changed after drawing cards
+                mana_per_turn[turn] = max(mana_per_turn[turn], max_attainable_mana({'hand': hand, 'mana': mana, 'gold': gold, 'land_for_turn': land_for_turn}))
     return mana_per_turn
+
+# How much mana can we attain this turn (without considering card draw), by:
+#   - Tapping everything we have for mana
+#   - Cracking all gold tokens for mana
+#   - Playing the land that gives the most mana in the current turn
+#   - And only playing cards that net mana
+def max_attainable_mana(context):
+    hand, mana, gold, land_for_turn = [context[k] for k in ['hand', 'mana', 'gold', 'land_for_turn']]
+
+    max_attainable_mana = mana + gold
+    max_attainable_mana += max([0]+[card.netgain() for card in hand if card.land and not land_for_turn])
+    for card in sorted([card for card in hand if not card.land], key=lambda card: card.cost):
+        max_attainable_mana += max([0, card.netgain()])
+        if card.cost > max_attainable_mana:
+            break
+
+    return max_attainable_mana

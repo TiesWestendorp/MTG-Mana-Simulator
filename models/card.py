@@ -14,6 +14,11 @@ class Card:
         self.draw_sequence = draw_sequence if draw_sequence is not None else Sequence.zero
         self.gold_sequence = gold_sequence if gold_sequence is not None else Sequence.zero
 
+    def approximate_net_mana_sequence(self):
+        return self.mana_sequence + self.gold_sequence + Sequence.once(-self.cost)
+    def netgain(self):
+        return self.approximate_net_mana_sequence().finite_prefix(1)[0]
+
     @staticmethod
     def untapped_rock(cost, mana):
         return Card(cost=cost, mana_sequence=Sequence.repeat(mana))
