@@ -18,8 +18,8 @@ def run_single(deck, ai, turns):
         # Draw as much cards as you're supposed to this turn
         context.turn  = turn+1
         context.draw_cards(sum([generator.__next__() for generator in draw_generators]))
-        context.mana  = sum([generator.__next__() for generator in mana_generators]) # Tap everything for mana
-        context.gold += sum([generator.__next__() for generator in gold_generators]) # Create gold
+        context.mana  = sum([generator.__next__() for generator in mana_generators])
+        context.gold += sum([generator.__next__() for generator in gold_generators])
         context.land_for_turn = False
         mana_per_turn[turn] = context.max_attainable_mana()
 
