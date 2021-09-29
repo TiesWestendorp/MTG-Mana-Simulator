@@ -1,3 +1,5 @@
+from random import sample
+
 class Context:
     def __init__(self, turn=None, hand=None, mana=None, gold=None, land_for_turn=None, remaining=None):
         self.turn = turn
@@ -7,8 +9,25 @@ class Context:
         self.land_for_turn = land_for_turn
         self.remaining = remaining
 
+    def draw_cards(self, n):
+        for _ in range(n):
+            self.hand.append(self.remaining.pop())
+
     def play_card(self, card):
-        pass
+        generators = {
+            'mana': card.mana_sequence.generator(),
+            'draw': card.draw_sequence.generator(),
+            'gold': card.gold_sequence.generator()
+        }
+
+        for land_index in sorted(sample([k for k,card in enumerate(self.remaining) if card.land], card.lands_removed), key=lambda x: -x):
+            self.remaining.pop(land_index)
+        self.land_for_turn = self.land_for_turn or card.land # Disable land play if it was a land
+        self.gold += generators['gold'].__next__() - min([self.gold, max([0, card.cost-self.mana])]) # Pay appropriate gold
+        self.mana += generators['mana'].__next__() - min([self.mana, card.cost])                # Pay appropriate mana
+        self.draw_cards(generators['draw'].__next__()) # Draw appropriate amount of cards
+
+        return generators
 
     def playable_cards(self):
         return [k for k,card in enumerate(self.hand) if (not card.land and card.cost <= self.mana+self.gold) or (card.land and not self.land_for_turn)]
