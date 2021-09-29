@@ -4,7 +4,7 @@ from random import seed
 seed(1337)
 
 deck = 38*[Card.untapped_land] + 61*[Card.filler]
-experiment = Experiment(deck=deck, ai=AI.naive, turns=8, repeats=10000, options={ 'variance_reduction': 'antithetic-variates' })
+experiment = Experiment(deck=deck, ai=AI.naive, turns=8, repeats=15000, options={ 'variance_reduction': 'antithetic-variates' })
 
 results = list(experiment.evaluate([Metric.minimum_turn_mana]).values())[0]
 hypergeometric = [
@@ -19,4 +19,4 @@ hypergeometric = [
 ]
 
 for x,y in zip(results, hypergeometric):
-    assert abs(x-y) < 0.01
+    assert abs(x-y)/y < 0.01
