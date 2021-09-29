@@ -1,4 +1,6 @@
 from models.sequence import Sequence
+from models.card import Card
+from random import sample
 
 def run_single(deck, ai, turns):
     copied_deck = deck[:]
@@ -37,7 +39,6 @@ def run_single(deck, ai, turns):
                 break
 
             # Play chosen card
-            # TODO: implement land search
             card = hand.pop(chosen)
             mana_generator = card.mana_sequence.generator()
             draw_generator = card.draw_sequence.generator()
@@ -45,6 +46,8 @@ def run_single(deck, ai, turns):
             mana_generators.append(mana_generator)
             draw_generators.append(draw_generator)
             gold_generators.append(gold_generator)
+            for land_index in sorted(sample([k for k,card in enumerate(remaining) if card.land], card.lands_removed), key=lambda x: -x):
+                remaining.pop(land_index)
 
             land_for_turn = land_for_turn or card.land # Disable land play if it was a land
             gold += gold_generator.__next__() - min([gold, max([0, card.cost-mana])]) # Pay appropriate gold

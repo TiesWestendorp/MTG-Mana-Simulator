@@ -15,8 +15,8 @@ smothering_tithe   = Card("Smothering Tithe", cost=4, gold_sequence=Sequence.rep
 bounty_of_the_luxa = Card("Bounty of the Luxa", cost=4, mana_sequence=Sequence([0], [0, 3]), draw_sequence=Sequence([], [0, 1]))
 
 lands        = 38*[Card.untapped_land]
-ramp_package = 3*[elf] + 4*[talisman] + 4*[locket] + [smothering_tithe]
-draw_package = 4*[Card.cantrip] + [sign_in_blood, divination, phyrexian_arena]
+ramp_package = 4*[elf] + 4*[talisman] + 4*[locket] + [smothering_tithe]
+draw_package = 6*[Card.cantrip] + [sign_in_blood, divination, phyrexian_arena]
 
 decks = []
 decks.append(["x ramp, x card draw", lands[:]])

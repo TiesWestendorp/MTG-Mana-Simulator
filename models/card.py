@@ -6,13 +6,14 @@ class Card:
     cantrip = None
     filler = None
 
-    def __init__(self, name="", land=False, cost=0, mana_sequence=None, draw_sequence=None, gold_sequence=None):
+    def __init__(self, name="", land=False, cost=0, mana_sequence=None, draw_sequence=None, gold_sequence=None, lands_removed=0):
         self.name = name
         self.land = land
         self.cost = cost
         self.mana_sequence = mana_sequence if mana_sequence is not None else Sequence.zero
         self.draw_sequence = draw_sequence if draw_sequence is not None else Sequence.zero
         self.gold_sequence = gold_sequence if gold_sequence is not None else Sequence.zero
+        self.lands_removed = lands_removed
 
     def approximate_net_mana_sequence(self):
         return self.mana_sequence + self.gold_sequence + Sequence.once(-self.cost)
@@ -29,7 +30,7 @@ class Card:
     def draw_spell(cost, cards):
         return Card(cost=cost, draw_sequence=Sequence.once(1))
 
-Card.untapped_land = Card(land=True, mana_sequence=Sequence.one)
-Card.tapped_land   = Card(land=True, mana_sequence=Sequence.one.prefixed_by([0]))
+Card.untapped_land = Card("Untapped land", land=True, mana_sequence=Sequence.one)
+Card.tapped_land   = Card("Tapped land", land=True, mana_sequence=Sequence.one.prefixed_by([0]))
 Card.cantrip       = Card.draw_spell(1, 1)
 Card.filler        = Card(cost=float('inf'))
