@@ -8,11 +8,13 @@ class AI:
         self.choose = choose
 
 from random import choice
-def naive_choice(context):
-    return choice(context['playable_cards'])
+def naive_choice(playable_cards, _):
+    return choice(playable_cards)
 
-def improved_land_choice(context):
-    hand, mana, gold, playable_cards = [context[k] for k in ['hand', 'mana', 'gold', 'playable_cards']]
+def improved_land_choice(playable_cards, context):
+    hand = context.hand
+    mana = context.mana
+    gold = context.gold
 
     # If there's a reason to play an untapped land, play it
     untapped_lands   = [k for k in playable_cards if hand[k].land and hand[k].mana_sequence.finite_prefix(1) != [0]]
