@@ -1,7 +1,7 @@
 from models import AI, Card, Experiment, Metric, Sequence
 ai = AI.naive
 turns = 10
-repeats = 20000
+repeats = 10000
 options = { 'variance_reduction': 'antithetic-variates' }
 
 dark_ritual        = Card("Dark Ritual", cost=1, mana_sequence=Sequence.once(3))
@@ -33,7 +33,7 @@ x,y = [2,2]
 xs = list([turn+1 for turn in range(turns)])
 
 experiments = [Experiment(deck=deck, ai=ai, turns=turns, repeats=repeats, options=options) for _,deck in decks]
-metrics = [Metric.minimum_mana(turn+1) for turn in range(turns)] + [Metric.minimum_turn_mana]
+metrics = [Metric.minimum_mana(turn+1) for turn in range(turns)] + [Metric.on_curve, Metric.ahead_of_curve]
 percentiles = [Metric.mean, Metric.percentile(0.001), Metric.percentile(0.25), Metric.percentile(0.5), Metric.percentile(0.75), Metric.percentile(1.0)]
 
 fig, axs = plt.subplots(y,x)
@@ -53,7 +53,7 @@ for i,(ax,(name,_),experiment) in enumerate(zip(axs.flat, decks, experiments)):
 plt.tight_layout()
 plt.show()
 
-for (name,deck),values in zip(decks, [list(experiment.evaluate([Metric.minimum_turn_mana]).values())[0] for experiment in experiments]):
+for (name,deck),values in zip(decks, [list(experiment.evaluate([Metric.on_curve]).values())[0] for experiment in experiments]):
     plt.plot(xs, values, label=name)
 plt.legend(loc=3, prop={'size': 6})
 plt.show()

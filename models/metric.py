@@ -2,7 +2,8 @@ class Metric:
     mean = None
     median = None
     mode = None
-    minimum_turn_mana = None
+    on_curve = None
+    ahead_of_curve = None
 
     def __init__(self, name, func):
         self.name = name
@@ -21,4 +22,5 @@ from statistics import mean, median, mode
 Metric.mean   = Metric("Mean",   lambda turn,manas_by_turn: mean(manas_by_turn))
 Metric.median = Metric("Median", lambda turn,manas_by_turn: int(median(manas_by_turn)))
 Metric.mode   = Metric("Mode",   lambda turn,manas_by_turn: mode(manas_by_turn))
-Metric.minimum_turn_mana = Metric("≥'turn' mana", lambda turn,manas_by_turn: sum(mana >= turn for mana in manas_by_turn)/len(manas_by_turn))
+Metric.on_curve       = Metric("≥'turn' mana",    lambda turn,manas_by_turn: sum(mana >= turn for mana in manas_by_turn)/len(manas_by_turn))
+Metric.ahead_of_curve = Metric("≥'turn+1' mana",  lambda turn,manas_by_turn: sum(mana > turn  for mana in manas_by_turn)/len(manas_by_turn))
