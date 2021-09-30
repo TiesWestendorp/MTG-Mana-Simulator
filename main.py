@@ -33,7 +33,7 @@ x,y = [2,2]
 xs = list([turn+1 for turn in range(turns)])
 
 experiments = [Experiment(deck=deck, ai=ai, turns=turns, repeats=repeats, options=options) for _,deck in decks]
-metrics = [Metric.minimum_mana(turn+1) for turn in range(turns)] + [Metric.on_curve, Metric.ahead_of_curve]
+metrics = [Metric.minimum_mana(turn+1) for turn in range(turns)] + [Metric.on_curve, Metric.above_curve]
 percentiles = [Metric.mean, Metric.percentile(0.001), Metric.percentile(0.25), Metric.percentile(0.5), Metric.percentile(0.75), Metric.percentile(1.0)]
 
 fig, axs = plt.subplots(y,x)
