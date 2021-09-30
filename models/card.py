@@ -1,3 +1,4 @@
+from typing import Optional
 from models.sequence import Sequence
 
 class Card:
@@ -6,7 +7,7 @@ class Card:
     cantrip = None
     filler = None
 
-    def __init__(self, name="", land=False, cost=0, mana_sequence=None, draw_sequence=None, gold_sequence=None, lands_removed=0):
+    def __init__(self, name="": str, land=False: bool, cost=0: int, mana_sequence=None: Optional[Sequence], draw_sequence=None: Optional[Sequence], gold_sequence=None: Optional[Sequence], lands_removed=0: int):
         self.name = name
         self.land = land
         self.cost = cost
@@ -18,16 +19,16 @@ class Card:
     def approximate_net_mana_sequence(self):
         return self.mana_sequence + self.gold_sequence + Sequence.once(-self.cost)
     def netgain(self):
-        return self.approximate_net_mana_sequence().finite_prefix(1)[0]
+        return self.mana_sequence.finite_prefix(1)[0] + self.gold_sequence.finite_prefix(1)[0] - self.cost
 
     @staticmethod
-    def untapped_rock(cost, mana):
+    def untapped_rock(cost: int, mana: int):
         return Card(cost=cost, mana_sequence=Sequence.repeat(mana))
     @staticmethod
-    def tapped_rock(cost, mana):
+    def tapped_rock(cost: int, mana: int):
         return Card(cost=cost, mana_sequence=Sequence.repeat(mana).prefixed_by([0]))
     @staticmethod
-    def draw_spell(cost, cards):
+    def draw_spell(cost: int, cards: int):
         return Card(cost=cost, draw_sequence=Sequence.once(1))
 
 Card.untapped_land = Card("Untapped land", land=True, mana_sequence=Sequence.one)

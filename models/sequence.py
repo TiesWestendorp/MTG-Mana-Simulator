@@ -1,6 +1,5 @@
 from typing import List, Iterator
 from math import ceil
-
 from models.helpers import divisors, lcm
 
 class Sequence:
@@ -26,6 +25,7 @@ class Sequence:
                 break
         return self
 
+    # Assumes the sequences are normalized
     def __eq__(self, other: 'Sequence') -> bool:
         return self.prefix == other.prefix and self.repeat == other.repeat
 
