@@ -9,7 +9,7 @@ from random import sample
 class Context:
     """Snapshot of the state at a particular point in time"""
 
-    def __init__(self, *, turn=None, hand=None, mana=None, gold=None, land_for_turn=None, remaining=None):
+    def __init__(self, *, turn=0, hand=None, mana=0, gold=0, land_for_turn=False, remaining=None):
         self.turn = turn
         self.hand = hand
         self.mana = mana

@@ -20,12 +20,18 @@ class Card:
 
     def approximate_net_mana_sequence(self):
         return self.mana_sequence + self.gold_sequence + Sequence.once(-self.cost)
+
     def netgain(self):
-        return self.mana_sequence.finite_prefix(1)[0] + self.gold_sequence.finite_prefix(1)[0] - self.cost
+        mana = self.mana_sequence.finite_prefix(1)[0]
+        gold = self.gold_sequence.finite_prefix(1)[0]
+        return mana + gold - self.cost
 
     def is_ramp(self):
+        """Whether this card produces mana at some point"""
         return self.mana_sequence != Sequence.zero or self.gold_sequence != Sequence.zero
+        
     def is_draw(self):
+        """Whether this card draws cards at some point"""
         return self.draw_sequence != Sequence.zero
 
     @staticmethod
@@ -36,7 +42,7 @@ class Card:
         return Card(cost=cost, mana_sequence=Sequence.repeat(mana).prefixed_by([0]))
     @staticmethod
     def draw_spell(cost: int, cards: int):
-        return Card(cost=cost, draw_sequence=Sequence.once(1))
+        return Card(cost=cost, draw_sequence=Sequence.once(cards))
 
 Card.untapped_land = Card("Untapped land", land=True, mana_sequence=Sequence.one)
 Card.tapped_land   = Card("Tapped land", land=True, mana_sequence=Sequence.one.prefixed_by([0]))

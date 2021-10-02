@@ -2,13 +2,13 @@
 Defines the Experiment class which is the main class of this module.
 """
 
+from typing import List
 from random import shuffle
-from models.run_single import run_single
 
 class Experiment:
     """Wrapper class for simulating multiple runs"""
 
-    def __init__(self, deck, ai, turns, repeats, *, options=None):
+    def __init__(self, deck: List["Card"], ai: "AI", turns: int, repeats: int, *, options=None):
         self.deck    = deck
         self.ai      = ai
         self.turns   = turns
@@ -34,7 +34,7 @@ class Experiment:
             else:
                 shuffle(self.deck)
 
-            self.traces[iteration] = run_single(self.deck, self.ai, self.turns)
+            self.traces[iteration] = self.ai.run(self.deck, self.turns)
 
     def evaluate(self, metrics):
         """Evaluate given metrics on the generated traces"""
