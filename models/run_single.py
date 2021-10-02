@@ -1,7 +1,7 @@
-from models.sequence import Sequence
+from random import sample
 from models.card import Card
 from models.context import Context
-from random import sample
+from models.sequence import Sequence
 
 def run_single(deck, ai, turns):
     copied_deck = deck[:]

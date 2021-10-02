@@ -1,6 +1,8 @@
 from random import sample
 
 class Context:
+    """Snapshot of all the data that the AIs can base their decisions on"""
+
     def __init__(self, turn=None, hand=None, mana=None, gold=None, land_for_turn=None, remaining=None):
         self.turn = turn
         self.hand = hand

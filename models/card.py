@@ -2,6 +2,8 @@ from typing import Optional
 from models.sequence import Sequence
 
 class Card:
+    """Simplified model of a Magic card"""
+
     untapped_land = None
     tapped_land = None
     cantrip = None
@@ -20,6 +22,11 @@ class Card:
         return self.mana_sequence + self.gold_sequence + Sequence.once(-self.cost)
     def netgain(self):
         return self.mana_sequence.finite_prefix(1)[0] + self.gold_sequence.finite_prefix(1)[0] - self.cost
+
+    def is_ramp(self):
+        return self.mana_sequence != Sequence.zero or self.gold_sequence != Sequence.zero
+    def is_draw(self):
+        return self.draw_sequence != Sequence.zero
 
     @staticmethod
     def untapped_rock(cost: int, mana: int):

@@ -3,6 +3,8 @@ from math import ceil
 from models.helpers import divisors, lcm
 
 class Sequence:
+    """Infinite sequence of integers consisting of a finite prefix and a repeating part"""
+
     zero = None
     one  = None
 

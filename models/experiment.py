@@ -1,7 +1,9 @@
-from models.run_single import run_single
 from random import shuffle
+from models.run_single import run_single
 
 class Experiment:
+    """Wrapper class for simulating multiple runs"""
+
     def __init__(self, deck, ai, turns, repeats, options={}):
         self.deck    = deck
         self.ai      = ai
@@ -28,5 +30,6 @@ class Experiment:
                 shuffle(self.deck)
 
             self.traces[iteration] = run_single(self.deck, self.ai, self.turns)
+
     def evaluate(self, metrics):
         return dict(map(lambda metric: [metric.name, metric.compute(self.traces)], metrics))

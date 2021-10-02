@@ -1,7 +1,12 @@
+from statistics import mean, median, mode, variance
+
 class Metric:
+    """Computations that can be executed on the amount of mana in a turn (across traces)"""
+
     mean = None
     median = None
     mode = None
+    variance = None
     below_curve = None
     on_curve = None
     above_curve = None
@@ -14,17 +19,15 @@ class Metric:
 
     @staticmethod
     def minimum_mana(min_mana: int):
-        return Metric("≥{} mana".format(min_mana), lambda turn,manas_by_turn: sum(mana >= min_mana for mana in manas_by_turn)/len(manas_by_turn))
+        return Metric("≥{} mana".format(min_mana), lambda t,ms: sum(m >= min_mana for m in ms)/len(ms))
     @staticmethod
     def percentile(p: float):
-        return Metric("{}th percentile".format(p), lambda turn,manas_by_turn: sorted(manas_by_turn)[round(len(manas_by_turn)*p)-1])
+        return Metric("{}th percentile".format(p), lambda t,ms: sorted(ms)[round(len(ms)*p)-1])
 
-from statistics import mean, median, mode, variance
-Metric.mean   = Metric("Mean",   lambda turn,manas_by_turn:     mean(manas_by_turn))
-Metric.median = Metric("Median", lambda turn,manas_by_turn:     int(median(manas_by_turn)))
-Metric.mode   = Metric("Mode",   lambda turn,manas_by_turn:     mode(manas_by_turn))
-Metric.variance = Metric("Variance", lambda turn,manas_by_turn: variance(manas_by_turn))
-
-Metric.below_curve = Metric("<'turn' mana", lambda turn,manas_by_turn: sum(mana < turn  for mana in manas_by_turn)/len(manas_by_turn))
-Metric.on_curve    = Metric("≥'turn' mana", lambda turn,manas_by_turn: sum(mana >= turn for mana in manas_by_turn)/len(manas_by_turn))
-Metric.above_curve = Metric(">'turn' mana", lambda turn,manas_by_turn: sum(mana > turn  for mana in manas_by_turn)/len(manas_by_turn))
+Metric.mean        = Metric("Mean",         lambda t,ms: mean(ms))
+Metric.median      = Metric("Median",       lambda t,ms: int(median(ms)))
+Metric.mode        = Metric("Mode",         lambda t,ms: mode(ms))
+Metric.variance    = Metric("Variance",     lambda t,ms: variance(ms))
+Metric.below_curve = Metric("<'turn' mana", lambda t,ms: sum(m <  t for m in ms)/len(ms))
+Metric.on_curve    = Metric("≥'turn' mana", lambda t,ms: sum(m >= t for m in ms)/len(ms))
+Metric.above_curve = Metric(">'turn' mana", lambda t,ms: sum(m >  t for m in ms)/len(ms))
