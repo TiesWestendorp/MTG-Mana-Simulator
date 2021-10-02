@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 from models import AI, Card, Experiment, Metric, Sequence
 
 ai = AI.naive
-turns = 10
-repeats = 10000
+TURNS = 10
+REPEATS = 10000
 options = { 'variance_reduction': 'antithetic-variates' }
 
 dark_ritual        = Card("Dark Ritual", cost=1, mana_sequence=Sequence.once(3))
@@ -30,10 +30,10 @@ for _,deck in decks:
     deck += (99-len(deck))*[Card.filler]
 
 x,y = [2,2]
-xs = list([turn+1 for turn in range(turns)])
+xs = list([turn+1 for turn in range(TURNS)])
 
-experiments = [Experiment(deck=deck, ai=ai, turns=turns, repeats=repeats, options=options) for _,deck in decks]
-metrics = [Metric.minimum_mana(turn+1) for turn in range(turns)] + [Metric.on_curve, Metric.above_curve]
+experiments = [Experiment(deck=deck, ai=ai, turns=TURNS, repeats=REPEATS, options=options) for _,deck in decks]
+metrics = [Metric.minimum_mana(turn+1) for turn in range(TURNS)] + [Metric.on_curve, Metric.above_curve]
 percentiles = [Metric.mean, Metric.percentile(0.001), Metric.percentile(0.25), Metric.percentile(0.5), Metric.percentile(0.75), Metric.percentile(1.0)]
 
 fig, axs = plt.subplots(y,x)
@@ -48,7 +48,7 @@ for i,(ax,(name,_),experiment) in enumerate(zip(axs.flat, decks, experiments)):
     if i>=x*(y-1):
         ax.set(xlabel='Turns')
     ax.set_title(name)
-    ax.set_xticks([turn+1 for turn in range(turns)])
+    ax.set_xticks([turn+1 for turn in range(TURNS)])
     ax.legend(loc=2, prop={'size': 4})
 plt.tight_layout()
 plt.show()
@@ -72,7 +72,7 @@ for i,(ax,(name, _),experiment) in enumerate(zip(axs.flat, decks, experiments)):
     if i>=x*(y-1):
         ax.set(xlabel='Turns')
     ax.set_title(name)
-    ax.set_xticks([turn+1 for turn in range(turns)])
+    ax.set_xticks([turn+1 for turn in range(TURNS)])
     ax.legend(loc=2, prop={'size': 4})
 plt.tight_layout()
 plt.show()
