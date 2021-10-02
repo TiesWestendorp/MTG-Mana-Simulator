@@ -1,9 +1,9 @@
+from typing import List
 from random import sample
-from models.card import Card
 from models.context import Context
 from models.sequence import Sequence
 
-def run_single(deck, ai, turns):
+def run_single(deck: List['Card'], AI: 'AI', turns: int) -> List[int]:
     copied_deck = deck[:]
 
     # TODO: allow mulligan
@@ -29,7 +29,7 @@ def run_single(deck, ai, turns):
                 # Pass the turn if there's no playable cards left
                 break
 
-            chosen = ai.choose(playable_cards, context)
+            chosen = AI.choose(playable_cards, context)
             if chosen not in playable_cards:
                 # Pass the turn if the AI decides to stop playing
                 break
