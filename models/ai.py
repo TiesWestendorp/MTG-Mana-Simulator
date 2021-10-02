@@ -5,7 +5,7 @@ from models.sequence import Sequence
 class AI:
     naive = None
 
-    def __init__(self, mulligan, choose: Callable[[List[int], Context] -> int]):
+    def __init__(self, mulligan, choose: Callable[[List[int], Context], int]):
         self.mulligan = mulligan
         self.choose = choose
 

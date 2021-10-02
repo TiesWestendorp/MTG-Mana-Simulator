@@ -7,7 +7,7 @@ class Card:
     cantrip = None
     filler = None
 
-    def __init__(self, name="": str, land=False: bool, cost=0: int, mana_sequence=None: Optional[Sequence], draw_sequence=None: Optional[Sequence], gold_sequence=None: Optional[Sequence], lands_removed=0: int):
+    def __init__(self, name: str = "", land: bool = False, cost: int = 0, mana_sequence: Optional[Sequence] = None, draw_sequence: Optional[Sequence] = None, gold_sequence: Optional[Sequence] = None, lands_removed: int = 0):
         self.name = name
         self.land = land
         self.cost = cost
