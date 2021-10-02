@@ -27,7 +27,6 @@ decks.append(["✓ ramp, ✓ card draw", lands[:] + ramp_package[:] + draw_packa
 for _,deck in decks:
     deck += (99-len(deck))*[Card.filler]
 
-import numpy as np
 import matplotlib.pyplot as plt
 x,y = [2,2]
 xs = list([turn+1 for turn in range(turns)])
