@@ -27,13 +27,13 @@ class Metric:
     def minimum_mana(min_mana: int):
         """Probability of having at least the given amount of mana"""
         func = lambda t,ms: sum(m >= min_mana for m in ms)/len(ms)
-        return Metric("≥{} mana".format(min_mana), func)
+        return Metric(f"≥{min_mana} mana", func)
 
     @staticmethod
     def percentile(fraction: float):
         """Percentile score"""
         func = lambda t,ms: sorted(ms)[round(len(ms)*fraction)-1]
-        return Metric("{}th percentile".format(fraction), func)
+        return Metric(f"{fraction}th percentile", func)
 
 Metric.mean        = Metric("Mean",         lambda t,ms: mean(ms))
 Metric.median      = Metric("Median",       lambda t,ms: int(median(ms)))
