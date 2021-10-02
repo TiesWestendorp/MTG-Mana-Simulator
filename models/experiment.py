@@ -8,15 +8,15 @@ from models.run_single import run_single
 class Experiment:
     """Wrapper class for simulating multiple runs"""
 
-    def __init__(self, deck, AI, turns, repeats, options=None):
+    def __init__(self, deck, ai, turns, repeats, *, options=None):
         self.deck    = deck
-        self.AI      = AI
+        self.ai      = ai
         self.turns   = turns
         self.repeats = repeats
         self.options = options if options is not None else {}
         self.run()
 
-    def run(self):
+    def run(self) -> None:
         """Run the experiment"""
         variance_reduction = None
         if isinstance(self.options, dict):
