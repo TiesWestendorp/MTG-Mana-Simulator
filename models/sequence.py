@@ -14,16 +14,17 @@ class Sequence:
         self.normalize()
 
     def normalize(self):
+        """Normalizes the sequence, such that comparison can be done elementwise"""
         # Reduce prefix size by 'rotating' the repeated part
         while len(self.prefix) > 0 and self.prefix[-1] == self.repeat[-1]:
             self.prefix = self.prefix[:-1]
             self.repeat = self.repeat[-1:]+self.repeat[:-1]
 
         # Reduce repeated size by identifying sublist that multiply
-        for d in divisors(len(self.repeat)):
-            times = len(self.repeat)//d
-            if self.repeat == times*self.repeat[:d]:
-                self.repeat = self.repeat[:d]
+        for divisor in divisors(len(self.repeat)):
+            times = len(self.repeat)//divisor
+            if self.repeat == times*self.repeat[:divisor]:
+                self.repeat = self.repeat[:divisor]
                 break
         return self
 
@@ -40,15 +41,16 @@ class Sequence:
         return Sequence(summed[:prefix_length], summed[prefix_length:]).normalize()
 
     def prefixed_by(self, additional_prefix: List[int]) -> 'Sequence':
+        """Prefix an additional number to the sequence"""
         return Sequence(additional_prefix + self.prefix, self.repeat)
 
-    # Returns finite prefixes of length n of the sequence
-    def finite_prefix(self, n: int) -> List[int]:
-        k = ceil((n - len(self.prefix))/len(self.repeat))
-        return (self.prefix + k*self.repeat)[:n]
+    def finite_prefix(self, length: int) -> List[int]:
+        """Returns finite prefix of the sequence of the given length"""
+        k = ceil((length - len(self.prefix))/len(self.repeat))
+        return (self.prefix + k*self.repeat)[:length]
 
-    # Returns a generator that iterates the sequence
     def generator(self) -> Iterator[int]:
+        """Returns a generator that iterates the sequence"""
         for element in self.prefix:
             yield element
         while True:
@@ -56,11 +58,14 @@ class Sequence:
                 yield element
 
     @staticmethod
-    def once(n: int) -> 'Sequence':
-        return Sequence([n], [])
+    def once(number: int) -> 'Sequence':
+        """Returns a sequence of all zeroes prefixed by the given number"""
+        return Sequence([number], [])
+
     @staticmethod
-    def repeat(n: int) -> 'Sequence':
-        return Sequence([], [n])
+    def repeat(number: int) -> 'Sequence':
+        """Returns a sequence infinitely repeating the given number"""
+        return Sequence([], [number])
 
 Sequence.zero = Sequence.repeat(0) # The all zeroes sequence: 0, 0, 0, ...
 Sequence.one  = Sequence.repeat(1) # The all ones sequence:   1, 1, 1, ...
