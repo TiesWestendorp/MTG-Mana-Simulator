@@ -16,9 +16,8 @@ sign_in_blood      = Card.draw_spell(2, 2)
 talisman           = Card.untapped_rock(2, 1)
 divination         = Card.draw_spell(3, 2)
 locket             = Card.untapped_rock(3, 1)
-phyrexian_arena    = Card("Phyrexian Arena", cost=3, draw_sequence=Sequence.one.prefixed_by([0]))
-smothering_tithe   = Card("Smothering Tithe", cost=4, gold_sequence=Sequence.repeat(3).prefixed_by([0]))
-bounty_of_the_luxa = Card("Bounty of the Luxa", cost=4, mana_sequence=Sequence([0], [0, 3]), draw_sequence=Sequence([], [0, 1]))
+phyrexian_arena    = Card(cost=3, draw_sequence=Sequence.one.prefixed_by([0]))
+smothering_tithe   = Card(cost=4, gold_sequence=Sequence.repeat(3).prefixed_by([0]))
 
 lands        = 38*[Card.untapped_land]
 ramp_package = 4*[elf] + 4*[talisman] + 4*[locket] + [smothering_tithe]
@@ -36,9 +35,11 @@ for _,deck in decks:
 x,y = [2,2]
 xs = [turn+1 for turn in range(TURNS)]
 
-experiments = [Experiment(deck=deck, ai=AI, turns=TURNS, repeats=REPEATS, options=OPTIONS) for _,deck in decks]
-metrics = [Metric.minimum_mana(turn+1) for turn in range(TURNS)] + [Metric.on_curve, Metric.above_curve]
-percentiles = [Metric.mean, Metric.percentile(0.001), Metric.percentile(0.25), Metric.percentile(0.5), Metric.percentile(0.75), Metric.percentile(1.0)]
+experiment = lambda d: Experiment(deck=d, ai=AI, turns=TURNS, repeats=REPEATS, options=OPTIONS)
+experiments = [experiment(deck) for _,deck in decks]
+metrics  = [Metric.minimum_mana(turn+1) for turn in range(TURNS)]
+metrics += [Metric.on_curve, Metric.above_curve]
+percentiles = [Metric.percentile(p) for p in [0.001,0.25,0.5,0.75,1.0]]
 
 fig, axs = plt.subplots(y,x)
 for i,(ax,(name,_),experiment) in enumerate(zip(axs.flat, decks, experiments)):
@@ -57,13 +58,15 @@ for i,(ax,(name,_),experiment) in enumerate(zip(axs.flat, decks, experiments)):
 plt.tight_layout()
 plt.show()
 
-for (name,deck),values in zip(decks, [list(experiment.evaluate([Metric.on_curve]).values())[0] for experiment in experiments]):
-    plt.plot(xs, values, label=name)
+values = [list(experiment.evaluate([Metric.on_curve]).values())[0] for experiment in experiments]
+for (name,deck),ys in zip(decks, values):
+    plt.plot(xs, ys, label=name)
 plt.legend(loc=3, prop={'size': 6})
 plt.show()
 
-for (name,deck),values in zip(decks, [list(experiment.evaluate([Metric.mean]).values())[0] for experiment in experiments]):
-    plt.plot(xs, values, label=name)
+values = [list(experiment.evaluate([Metric.mean]).values())[0] for experiment in experiments]
+for (name,deck),ys in zip(decks, values):
+    plt.plot(xs, ys, label=name)
 plt.legend(loc=2, prop={'size': 6})
 plt.show()
 
