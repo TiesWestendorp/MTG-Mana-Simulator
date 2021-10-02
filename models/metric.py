@@ -1,3 +1,7 @@
+"""
+Defines the Metric class which models functions that can be executed on traces.
+"""
+
 from statistics import mean, median, mode, variance
 
 class Metric:
@@ -14,15 +18,22 @@ class Metric:
     def __init__(self, name, func):
         self.name = name
         self.func = func
+
     def compute(self, traces):
+        """Compute the metric on the given traces"""
         return [self.func(turn+1, manas_by_turn) for turn,manas_by_turn in enumerate(zip(*traces))]
 
     @staticmethod
     def minimum_mana(min_mana: int):
-        return Metric("≥{} mana".format(min_mana), lambda t,ms: sum(m >= min_mana for m in ms)/len(ms))
+        """Probability of having at least the given amount of mana"""
+        func = lambda t,ms: sum(m >= min_mana for m in ms)/len(ms)
+        return Metric("≥{} mana".format(min_mana), func)
+
     @staticmethod
-    def percentile(p: float):
-        return Metric("{}th percentile".format(p), lambda t,ms: sorted(ms)[round(len(ms)*p)-1])
+    def percentile(fraction: float):
+        """Percentile score"""
+        func = lambda t,ms: sorted(ms)[round(len(ms)*fraction)-1]
+        return Metric("{}th percentile".format(fraction), func)
 
 Metric.mean        = Metric("Mean",         lambda t,ms: mean(ms))
 Metric.median      = Metric("Median",       lambda t,ms: int(median(ms)))
