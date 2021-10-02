@@ -40,5 +40,5 @@ def improved_land_choice(playable_cards, context):
     # Otherwise, play randomly (tapped lands)
     return naive_choice(playable_cards, context)
 
-AI.naive = AI(lambda _: False, naive_choice)
+AI.naive      = AI(lambda _: False, naive_choice)
 AI.less_naive = AI(lambda _: False, improved_land_choice)
