@@ -1,10 +1,10 @@
 import matplotlib.pyplot as plt
 from models import AI, Card, Experiment, Metric, Sequence
 
-ai = AI.naive
+AI = AI.naive
 TURNS = 10
 REPEATS = 10000
-options = { 'variance_reduction': 'antithetic-variates' }
+OPTIONS = { 'variance_reduction': 'antithetic-variates' }
 
 dark_ritual        = Card("Dark Ritual", cost=1, mana_sequence=Sequence.once(3))
 elf                = Card.tapped_rock(1, 1)
@@ -30,9 +30,9 @@ for _,deck in decks:
     deck += (99-len(deck))*[Card.filler]
 
 x,y = [2,2]
-xs = list([turn+1 for turn in range(TURNS)])
+xs = [turn+1 for turn in range(TURNS)]
 
-experiments = [Experiment(deck=deck, ai=ai, turns=TURNS, repeats=REPEATS, options=options) for _,deck in decks]
+experiments = [Experiment(deck=deck, ai=AI, turns=TURNS, repeats=REPEATS, options=OPTIONS) for _,deck in decks]
 metrics = [Metric.minimum_mana(turn+1) for turn in range(TURNS)] + [Metric.on_curve, Metric.above_curve]
 percentiles = [Metric.mean, Metric.percentile(0.001), Metric.percentile(0.25), Metric.percentile(0.5), Metric.percentile(0.75), Metric.percentile(1.0)]
 
