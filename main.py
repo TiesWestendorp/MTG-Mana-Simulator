@@ -1,4 +1,6 @@
+import matplotlib.pyplot as plt
 from models import AI, Card, Experiment, Metric, Sequence
+
 ai = AI.naive
 turns = 10
 repeats = 10000
@@ -27,7 +29,6 @@ decks.append(["✓ ramp, ✓ card draw", lands[:] + ramp_package[:] + draw_packa
 for _,deck in decks:
     deck += (99-len(deck))*[Card.filler]
 
-import matplotlib.pyplot as plt
 x,y = [2,2]
 xs = list([turn+1 for turn in range(turns)])
 
