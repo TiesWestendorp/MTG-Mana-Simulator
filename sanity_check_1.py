@@ -3,16 +3,16 @@
 # hypergeometrically distributed.
 
 
-from models import AI, Card, Experiment, Metric
 from random import seed
+from models import AI, Card, Experiment, Metric
 
 seed(1337)
 
 deck = 38*[Card.untapped_land] + 61*[Card.filler]
-ai = AI.naive
-options = { 'variance_reduction': 'antithetic-variates' }
+AI = AI.naive
+OPTIONS = { 'variance_reduction': 'antithetic-variates' }
 
-experiment = Experiment(deck=deck, ai=ai, turns=8, repeats=15000, options=options)
+experiment = Experiment(deck=deck, ai=AI, turns=8, repeats=15000, options=OPTIONS)
 
 results = list(experiment.evaluate([Metric.on_curve]).values())[0]
 hypergeometric = [

@@ -1,7 +1,7 @@
 # Sanity check #4: removing lands from deck decreases chances of being on curve
 
-from models import AI, Card, Experiment, Metric
 from random import seed
+from models import AI, Card, Experiment, Metric
 
 seed(1337)
 
