@@ -1,4 +1,6 @@
-# Sanity check #2: by the pigeon-hole principle, have 100% chance to be on curve given n-6 lands in deck of size n
+# Sanity check #2:
+# By the pigeon-hole principle, have 100% chance to be on-curve given (n-6) lands
+# in a deck of size n.
 
 
 from models import AI, Card, Experiment, Metric

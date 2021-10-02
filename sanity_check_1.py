@@ -1,4 +1,6 @@
-# Sanity check #1: without ramp or draw, the land per turn distribution corresponds to the hypergeometric distribution
+# Sanity check #1:
+# Without ramp or draw, the sample of the probability of being on-curve is
+# hypergeometrically distributed.
 
 
 from models import AI, Card, Experiment, Metric
@@ -7,7 +9,10 @@ from random import seed
 seed(1337)
 
 deck = 38*[Card.untapped_land] + 61*[Card.filler]
-experiment = Experiment(deck=deck, ai=AI.naive, turns=8, repeats=15000, options={ 'variance_reduction': 'antithetic-variates' })
+ai = AI.naive
+options = { 'variance_reduction': 'antithetic-variates' }
+
+experiment = Experiment(deck=deck, ai=ai, turns=8, repeats=15000, options=options)
 
 results = list(experiment.evaluate([Metric.on_curve]).values())[0]
 hypergeometric = [
