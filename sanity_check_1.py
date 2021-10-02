@@ -1,7 +1,7 @@
-# Sanity check #1:
-# Without ramp or draw, the sample of the probability of being on-curve is
-# hypergeometrically distributed.
-
+"""
+Sanity check #1: without ramp or draw, the sample of the probability of being
+on-curve is hypergeometrically distributed.
+"""
 
 from random import seed
 from models import AI, Card, Experiment, Metric

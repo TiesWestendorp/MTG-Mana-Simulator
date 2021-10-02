@@ -1,3 +1,7 @@
+"""
+Plots several metrics of templates.
+"""
+
 import matplotlib.pyplot as plt
 from models import AI, Card, Experiment, Metric, Sequence
 
