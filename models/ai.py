@@ -17,11 +17,13 @@ class AI:
 
     def __init__(self, *,
             mulligan = None,
-            choose: Optional[Callable[["Context"], Optional[int]]]) -> None:
+            choose: Optional[Callable[["Context"], Optional[int]]] = None) -> None:
         self.mulligan = mulligan if mulligan is not None else (lambda _: False)
         self.choose   = choose   if choose   is not None else (lambda _: None)
 
-    def run(self, *, deck: List['Card'], turns: int) -> List[int]:
+    def run(self, *,
+            deck: List['Card'],
+            turns: int) -> List[int]:
         """Simulate playing given deck for some number of turns and return maximum mana per turn"""
         copied_deck = deck[:]
 
@@ -62,6 +64,10 @@ class AI:
                 # Maximum attainable mana may have changed after drawing cards
                 mana_per_turn[turn] = max(mana_per_turn[turn], context.max_attainable_mana())
         return mana_per_turn
+
+    @staticmethod
+    def mulligan_too_few_lands(number: int) -> None:
+        pass
 
 def improved_land_choice(context: "Context") -> Optional[int]:
     """Play untapped land if needed, then ramp, then draw, then randomly choose a playable card"""

@@ -8,6 +8,7 @@ from random import sample
 
 class Context:
     """Snapshot of the state at a particular point in time"""
+    # pylint: disable=too-many-instance-attributes
 
     def __init__(self, *,
             turn: int = 0,
