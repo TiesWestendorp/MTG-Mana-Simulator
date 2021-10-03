@@ -66,7 +66,8 @@ class AI:
         return mana_per_turn
 
     @staticmethod
-    def mulligan_too_few_lands(number: int) -> None:
+    def mulligan_too_few_lands(max: int, lands: int) -> None:
+        """Mulligan at most some number of times, whenever having less than some number of lands"""
         pass
 
 def improved_land_choice(context: "Context") -> Optional[int]:
