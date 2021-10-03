@@ -12,7 +12,7 @@ deck = 38*[Card.untapped_land] + 61*[Card.filler]
 AI = AI.naive
 OPTIONS = { 'variance_reduction': 'antithetic-variates' }
 
-experiment = Experiment(deck=deck, ai=AI, turns=8, repeats=15000, options=OPTIONS)
+experiment = Experiment(deck=deck, agent=AI, turns=8, repeats=15000, options=OPTIONS)
 
 results = list(experiment.evaluate([Metric.on_curve]).values())[0]
 hypergeometric = [

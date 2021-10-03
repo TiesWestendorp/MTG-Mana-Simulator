@@ -27,7 +27,7 @@ class AI:
         """Simulate playing given deck for some number of turns and return maximum mana per turn"""
         copied_deck = deck[:]
 
-        # TODO: allow mulligan
+        # allow mulligan
         context = Context(hand=copied_deck[0:7], remaining=copied_deck[7:], land_for_turn=False)
 
         mana_generators = []
@@ -66,9 +66,8 @@ class AI:
         return mana_per_turn
 
     @staticmethod
-    def mulligan_too_few_lands(max: int, lands: int) -> None:
+    def mulligan_too_few_lands(max_times: int, lands: int) -> None:
         """Mulligan at most some number of times, whenever having less than some number of lands"""
-        pass
 
 def improved_land_choice(context: "Context") -> Optional[int]:
     """Play untapped land if needed, then ramp, then draw, then randomly choose a playable card"""

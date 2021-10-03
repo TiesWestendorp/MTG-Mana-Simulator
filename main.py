@@ -35,7 +35,7 @@ for _,deck in decks:
 x,y = [2,2]
 xs = [turn+1 for turn in range(TURNS)]
 
-experiment = lambda d: Experiment(deck=d, ai=AI, turns=TURNS, repeats=REPEATS, options=OPTIONS)
+experiment = lambda d: Experiment(deck=d, agent=AI, turns=TURNS, repeats=REPEATS, options=OPTIONS)
 experiments = [experiment(deck) for _,deck in decks]
 metrics  = [Metric.minimum_mana(turn+1) for turn in range(TURNS)]
 metrics += [Metric.on_curve, Metric.above_curve]
