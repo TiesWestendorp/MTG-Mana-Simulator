@@ -11,14 +11,15 @@ from models.sequence import Sequence
 class AI:
     """Decision agent that implements mulligan and card playing algorithms"""
 
+    dud        = None
     naive      = None
     less_naive = None
 
     def __init__(self, *,
             mulligan = None,
-            choose: Callable[["Context"], Optional[int]]) -> None:
+            choose: Optional[Callable[["Context"], Optional[int]]]) -> None:
         self.mulligan = mulligan if mulligan is not None else (lambda _: False)
-        self.choose = choose
+        self.choose   = choose   if choose   is not None else (lambda _: None)
 
     def run(self, *, deck: List['Card'], turns: int) -> List[int]:
         """Simulate playing given deck for some number of turns and return maximum mana per turn"""
@@ -92,5 +93,6 @@ def improved_land_choice(context: "Context") -> Optional[int]:
     # Otherwise, play randomly (tapped lands)
     return naive_choice(context)
 
+AI.dud        = AI()
 AI.naive      = AI(choose=naive_choice)
 AI.less_naive = AI(choose=improved_land_choice)
