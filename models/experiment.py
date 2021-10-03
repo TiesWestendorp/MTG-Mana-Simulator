@@ -8,9 +8,9 @@ from random import shuffle
 class Experiment:
     """Wrapper class for simulating multiple runs"""
 
-    def __init__(self, deck: List["Card"], ai: "AI", turns: int, repeats: int, *, options=None):
+    def __init__(self, deck: List["Card"], agent: "AI", turns: int, repeats: int, *, options=None):
         self.deck    = deck
-        self.ai      = ai
+        self.agent   = agent
         self.turns   = turns
         self.repeats = repeats
         self.options = options if options is not None else {}
@@ -34,7 +34,7 @@ class Experiment:
             else:
                 shuffle(self.deck)
 
-            self.traces[iteration] = self.ai.run(deck=self.deck, turns=self.turns)
+            self.traces[iteration] = self.agent.run(deck=self.deck, turns=self.turns)
 
     def evaluate(self, metrics: List["Metric"]):
         """Evaluate given metrics on the generated traces"""
