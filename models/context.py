@@ -22,6 +22,9 @@ class Context:
         self.land_for_turn = land_for_turn
         self.hand = hand if hand is not None else []
         self.remaining = remaining if remaining is not None else []
+
+        # Caching behaviours
+        self.cached_playable_cards = None
         self.cached_max_attainable_mana = None
 
     def lands_in_hand(self) -> List["Card"]:
@@ -43,11 +46,13 @@ class Context:
         """Draw a number of cards"""
         if number > 0:
             self.cached_max_attainable_mana = None
-        for _ in range(number):
-            self.hand.append(self.remaining.pop())
+            self.cached_playable_cards = None
+            for _ in range(number):
+                self.hand.append(self.remaining.pop())
 
     def play_card(self, card: "Card"):
         """Update the context by playing a given card"""
+        self.cached_playable_cards = None
         generators = {
             'mana': card.mana_sequence.generator(),
             'draw': card.draw_sequence.generator(),
@@ -62,21 +67,22 @@ class Context:
 
     def playable_cards(self) -> List[int]:
         """Returns a list of indices of the cards that can currently be played"""
-        mana = self.mana+self.gold
-        condition = lambda card: card.cost <= mana and not (card.land and self.land_for_turn)
-        return [k for k,card in enumerate(self.hand) if condition(card)]
+        if self.cached_playable_cards is None:
+            mana = self.mana+self.gold
+            condition = lambda card: card.cost <= mana and not (card.land and self.land_for_turn)
+            self.cached_playable_cards = [k for k,card in enumerate(self.hand) if condition(card)]
+        return self.cached_playable_cards
 
     def max_attainable_mana(self) -> int:
         """Maximum attainable mana based on public information (lands and net gain)"""
-        if self.cached_max_attainable_mana is not None:
-            return self.cached_max_attainable_mana
-        max_attainable_mana = self.mana + self.gold
-        if not self.land_for_turn:
-            max_attainable_mana += max([0]+[card.netgain() for card in self.lands_in_hand()])
-        for card in sorted(self.nonlands_in_hand(), key=lambda card: card.cost):
-            max_attainable_mana += max([0, card.netgain()])
-            # Cards are traversed in cost order, so we can stop early if we can't pay the cost
-            if card.cost > max_attainable_mana:
-                break
-        self.cached_max_attainable_mana = max_attainable_mana
-        return max_attainable_mana
+        if self.cached_max_attainable_mana is None:
+            max_attainable_mana = self.mana + self.gold
+            if not self.land_for_turn:
+                max_attainable_mana += max([0]+[card.netgain() for card in self.lands_in_hand()])
+            for card in sorted(self.nonlands_in_hand(), key=lambda card: card.cost):
+                max_attainable_mana += max([0, card.netgain()])
+                # Cards are traversed in cost order, so we can stop early if we can't pay the cost
+                if card.cost > max_attainable_mana:
+                    break
+            self.cached_max_attainable_mana = max_attainable_mana
+        return self.cached_max_attainable_mana

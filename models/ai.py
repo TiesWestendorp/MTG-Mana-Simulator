@@ -3,7 +3,7 @@ Defines the AI class which is the decision agent that decides whether to mulliga
 or not, and which cards should be played given a certain 'context'.
 """
 
-from typing import Callable, List
+from typing import Callable, List, Optional
 from random import choice
 from models.context import Context
 from models.sequence import Sequence
@@ -14,8 +14,10 @@ class AI:
     naive      = None
     less_naive = None
 
-    def __init__(self, mulligan, choose: Callable[[List[int], Context], int]) -> None:
-        self.mulligan = mulligan
+    def __init__(self, *,
+            mulligan = None,
+            choose: Callable[["Context"], Optional[int]]) -> None:
+        self.mulligan = mulligan if mulligan is not None else (lambda _: False)
         self.choose = choose
 
     def run(self, *, deck: List['Card'], turns: int) -> List[int]:
@@ -26,7 +28,7 @@ class AI:
         context = Context(hand=copied_deck[0:7], remaining=copied_deck[7:], land_for_turn=False)
 
         mana_generators = []
-        draw_generators = [Sequence.one.generator()]
+        draw_generators = [Sequence.one.generator()] # Draw a card every turn
         gold_generators = []
 
         mana_per_turn = turns*[None]
@@ -45,7 +47,7 @@ class AI:
                     # Pass the turn if there's no playable cards left
                     break
 
-                chosen = self.choose(playable_cards, context)
+                chosen = self.choose(context)
                 if chosen not in playable_cards:
                     # Pass the turn if the AI decides to stop playing
                     break
@@ -60,13 +62,16 @@ class AI:
                 mana_per_turn[turn] = max(mana_per_turn[turn], context.max_attainable_mana())
         return mana_per_turn
 
-def naive_choice(playable_cards, context: "Context") -> int:
-    return choice(playable_cards)
+def naive_choice(context: "Context") -> Optional[int]:
+    """Randomly choose a playable card"""
+    return choice(context.playable_cards())
 
-def improved_land_choice(playable_cards, context: "Context") -> int:
+def improved_land_choice(context: "Context") -> Optional[int]:
+    """Play untapped land if needed, then ramp, then draw, then randomly choose a playable card"""
     hand = context.hand
     mana = context.mana
     gold = context.gold
+    playable_cards = context.playable_cards()
 
     # If there's a reason to play an untapped land, play it
     untapped_lands   = [k for k in playable_cards if hand[k].land and hand[k].netgain() != 0]
@@ -87,5 +92,5 @@ def improved_land_choice(playable_cards, context: "Context") -> int:
     # Otherwise, play randomly (tapped lands)
     return naive_choice(playable_cards, context)
 
-AI.naive      = AI(lambda _: False, naive_choice)
-AI.less_naive = AI(lambda _: False, improved_land_choice)
+AI.naive      = AI(choose=naive_choice)
+AI.less_naive = AI(choose=improved_land_choice)
