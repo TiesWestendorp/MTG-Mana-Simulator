@@ -54,8 +54,8 @@ class Sequence:
         """Returns finite prefix of the sequence of the given length"""
         if length <= len(self.prefix):
             return self.prefix[:length]
-        k = ceil((length - len(self.prefix))/len(self.pattern))
-        return (self.prefix + k*self.pattern)[:length]
+        times = ceil((length - len(self.prefix))/len(self.pattern))
+        return (self.prefix + times*self.pattern)[:length]
 
     def generator(self) -> Iterator[int]:
         """Returns a generator that iterates the sequence"""
