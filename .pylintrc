@@ -1,2 +1,4 @@
+[PYLINT]
+
 disable=too-many-instance-attributes
 good-names=ai
