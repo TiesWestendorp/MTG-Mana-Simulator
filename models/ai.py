@@ -90,7 +90,7 @@ def improved_land_choice(context: "Context") -> Optional[int]:
         return choice(draw)
 
     # Otherwise, play randomly (tapped lands)
-    return naive_choice(playable_cards, context)
+    return naive_choice(context)
 
 AI.naive      = AI(choose=naive_choice)
 AI.less_naive = AI(choose=improved_land_choice)
