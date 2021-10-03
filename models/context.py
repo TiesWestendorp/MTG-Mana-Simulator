@@ -3,44 +3,50 @@ Defines the Context class which is used to manage the state. AI decisions are ba
 solely on a given context, and playing a card modifies a context.
 """
 
-from typing import List
+from typing import List, Optional
 from random import sample
 
 class Context:
     """Snapshot of the state at a particular point in time"""
 
-    def __init__(self, *, turn=0, hand=None, mana=0, gold=0, land_for_turn=False, remaining=None):
+    def __init__(self, *,
+            turn: int = 0,
+            mana: int = 0,
+            gold: int = 0,
+            land_for_turn: bool = False,
+            hand: Optional[List["Card"]] = None,
+            remaining: Optional[List["Card"]] = None) -> None:
         self.turn = turn
-        self.hand = hand
         self.mana = mana
         self.gold = gold
         self.land_for_turn = land_for_turn
-        self.remaining = remaining
+        self.hand = hand if hand is not None else []
+        self.remaining = remaining if remaining is not None else []
         self.cached_max_attainable_mana = None
 
-    def lands_in_hand(self):
+    def lands_in_hand(self) -> List["Card"]:
         """List of all land cards in hand"""
         return [card for card in self.hand if card.land]
 
-    def nonlands_in_hand(self):
+    def nonlands_in_hand(self) -> List["Card"]:
         """List of all nonland cards in hand"""
         return [card for card in self.hand if not card.land]
 
-    def remove_lands(self, number):
+    def remove_lands(self, number: int) -> None:
         """Randomly removes a number of lands from the deck"""
         if number > 0:
             land_indices = sample([k for k,card in enumerate(self.remaining) if card.land], number)
             for land_index in land_indices.sort(reverse=True):
                 self.remaining.pop(land_index)
 
-    def draw_cards(self, number):
+    def draw_cards(self, number: int) -> None:
         """Draw a number of cards"""
         if number > 0:
             self.cached_max_attainable_mana = None
         for _ in range(number):
             self.hand.append(self.remaining.pop())
 
-    def play_card(self, card):
+    def play_card(self, card: "Card"):
         """Update the context by playing a given card"""
         generators = {
             'mana': card.mana_sequence.generator(),

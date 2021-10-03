@@ -52,6 +52,8 @@ class Sequence:
 
     def finite_prefix(self, length: int) -> List[int]:
         """Returns finite prefix of the sequence of the given length"""
+        if length <= len(self.prefix):
+            return self.prefix[:length]
         k = ceil((length - len(self.prefix))/len(self.pattern))
         return (self.prefix + k*self.pattern)[:length]
 

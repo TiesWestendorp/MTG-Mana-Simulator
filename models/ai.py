@@ -1,3 +1,8 @@
+"""
+Defines the AI class which is the decision agent that decides whether to mulligan
+or not, and which cards should be played given a certain 'context'.
+"""
+
 from typing import Callable, List
 from random import choice
 from models.context import Context
@@ -9,11 +14,11 @@ class AI:
     naive      = None
     less_naive = None
 
-    def __init__(self, mulligan, choose: Callable[[List[int], Context], int]):
+    def __init__(self, mulligan, choose: Callable[[List[int], Context], int]) -> None:
         self.mulligan = mulligan
         self.choose = choose
 
-    def run(self, deck: List['Card'], turns: int) -> List[int]:
+    def run(self, *, deck: List['Card'], turns: int) -> List[int]:
         """Simulate playing given deck for some number of turns and return maximum mana per turn"""
         copied_deck = deck[:]
 
@@ -55,10 +60,10 @@ class AI:
                 mana_per_turn[turn] = max(mana_per_turn[turn], context.max_attainable_mana())
         return mana_per_turn
 
-def naive_choice(playable_cards, _):
+def naive_choice(playable_cards, context: "Context") -> int:
     return choice(playable_cards)
 
-def improved_land_choice(playable_cards, context):
+def improved_land_choice(playable_cards, context: "Context") -> int:
     hand = context.hand
     mana = context.mana
     gold = context.gold

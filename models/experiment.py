@@ -34,8 +34,8 @@ class Experiment:
             else:
                 shuffle(self.deck)
 
-            self.traces[iteration] = self.ai.run(self.deck, self.turns)
+            self.traces[iteration] = self.ai.run(deck=self.deck, turns=self.turns)
 
-    def evaluate(self, metrics):
+    def evaluate(self, metrics: List["Metric"]):
         """Evaluate given metrics on the generated traces"""
         return dict(map(lambda metric: [metric.name, metric.compute(self.traces)], metrics))
