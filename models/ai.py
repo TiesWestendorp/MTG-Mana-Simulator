@@ -63,10 +63,6 @@ class AI:
                 mana_per_turn[turn] = max(mana_per_turn[turn], context.max_attainable_mana())
         return mana_per_turn
 
-def naive_choice(context: "Context") -> Optional[int]:
-    """Randomly choose a playable card"""
-    return choice(context.playable_cards())
-
 def improved_land_choice(context: "Context") -> Optional[int]:
     """Play untapped land if needed, then ramp, then draw, then randomly choose a playable card"""
     hand = context.hand
@@ -91,8 +87,8 @@ def improved_land_choice(context: "Context") -> Optional[int]:
         return choice(draw)
 
     # Otherwise, play randomly (tapped lands)
-    return naive_choice(context)
+    return choice(playable_cards)
 
 AI.dud        = AI()
-AI.naive      = AI(choose=naive_choice)
+AI.naive      = AI(choose=lambda context: choice(context.playable_cards()))
 AI.less_naive = AI(choose=improved_land_choice)
