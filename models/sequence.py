@@ -50,7 +50,7 @@ class Sequence:
 
     def prefixed_by(self, additional_prefix: List[int]) -> 'Sequence':
         """Prefix an additional number to the sequence"""
-        return Sequence(additional_prefix + self.prefix, self.pattern)
+        return Sequence(additional_prefix + self.prefix, self.pattern).normalize()
 
     def finite_prefix(self, length: int) -> List[int]:
         """Returns finite prefix of the sequence of the given length"""
@@ -70,7 +70,7 @@ class Sequence:
     @staticmethod
     def once(number: int) -> 'Sequence':
         """Returns a sequence of all zeroes prefixed by the given number"""
-        return Sequence([number], [])
+        return Sequence([number], []).normalize()
 
     @staticmethod
     def repeat(number: int) -> 'Sequence':
