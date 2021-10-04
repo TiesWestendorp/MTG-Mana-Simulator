@@ -15,24 +15,24 @@ class Context:
             mana: int = 0,
             gold: int = 0,
             land_for_turn: bool = False,
-            hand: Optional[List["Card"]] = None,
-            remaining: Optional[List["Card"]] = None) -> None:
+            hand: Optional[List[Card]] = None,
+            remaining: Optional[List[Card]] = None) -> None:
         self.turn = turn
         self.mana = mana
         self.gold = gold
         self.land_for_turn = land_for_turn
-        self.hand = hand if hand is not None else []
-        self.remaining = remaining if remaining is not None else []
+        self.hand: List[Card] = hand if hand is not None else []
+        self.remaining: List[Card] = remaining if remaining is not None else []
 
         # Caching behaviours
         self.cached_playable_cards: Optional[List[int]] = None
         self.cached_max_attainable_mana: Optional[int] = None
 
-    def lands_in_hand(self) -> List["Card"]:
+    def lands_in_hand(self) -> List[Card]:
         """List of all land cards in hand"""
         return [card for card in self.hand if card.land]
 
-    def nonlands_in_hand(self) -> List["Card"]:
+    def nonlands_in_hand(self) -> List[Card]:
         """List of all nonland cards in hand"""
         return [card for card in self.hand if not card.land]
 
@@ -52,7 +52,7 @@ class Context:
             for _ in range(number):
                 self.hand.append(self.remaining.pop())
 
-    def play_card(self, card: "Card"):
+    def play_card(self, card: Card):
         """Update the context by playing a given card"""
         self.cached_playable_cards = None
         generators = {
