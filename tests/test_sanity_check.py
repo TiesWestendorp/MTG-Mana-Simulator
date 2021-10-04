@@ -16,14 +16,14 @@ def test_sanity_check_1():
     deck = 38*[Card.untapped_land] + 61*[Card.filler]
     ai = AI.naive
 
-    experiment = Experiment(deck=deck, ai=ai, turns=8, repeats=15000)
+    experiment = Experiment(deck=deck, ai=ai, turns=8, repeats=500)
     results = list(experiment.evaluate([Metric.on_curve]).values())[0]
 
     # Population: 99, Sample size: 7+n,  Successes in population: 38, Successes in Sample: n
     hypergeometric = [0.983,0.925,0.819,0.676,0.519,0.372,0.250,0.158]
 
     for sample,exact in zip(results, hypergeometric):
-        assert abs(sample - exact) < 0.01
+        assert abs(sample - exact) < 0.05
 
 def test_sanity_check_2():
     """
