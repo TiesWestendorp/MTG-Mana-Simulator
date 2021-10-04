@@ -6,10 +6,6 @@ properties that the system as a whole should exhibit.
 from random import seed
 from models import AI, Card, Experiment, Metric
 
-def relative_error(estimate,exact):
-    """Computes the relative error between an exact quantity and an estimation of it"""
-    return abs((estimate-exact)/estimate)
-
 def test_sanity_check_1():
     """
     Sanity check #1: without ramp or draw, the sample of the probability of being
@@ -27,7 +23,7 @@ def test_sanity_check_1():
     hypergeometric = [0.983,0.925,0.819,0.676,0.519,0.372,0.250,0.158]
 
     for sample,exact in zip(results, hypergeometric):
-        assert relative_error(sample, exact) < 0.01
+        assert abs(sample - exact) < 0.01
 
 def test_sanity_check_2():
     """
