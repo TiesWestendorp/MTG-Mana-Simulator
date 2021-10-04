@@ -1,8 +1,14 @@
+"""
+These sanity checks behave as high-level integration tests. They test statistical
+properties that the system as a whole should exhibit.
+"""
+
 from random import seed
 from models import AI, Card, Experiment, Metric
 
-def relative_error(approximate,exact):
-    return abs((approximate-exact)/exact)
+def relative_error(estimate,exact):
+    """Computes the relative error between an exact quantity and an estimation of it"""
+    return abs((estimate-exact)/estimate)
 
 def test_sanity_check_1():
     """
