@@ -11,15 +11,15 @@ from models.helpers import divisors, lcm
 class Sequence:
     """Infinite sequence of integers consisting of a finite prefix and a repeating pattern"""
 
-    zero = None
-    one  = None
+    zero : "Sequence"
+    one  : "Sequence"
 
     def __init__(self, prefix: List[int], pattern: List[int]) -> None:
         self.prefix = prefix
         self.pattern = pattern if len(pattern) > 0 else [0]
         self.normalize()
 
-    def normalize(self):
+    def normalize(self) -> "Sequence":
         """Normalizes the sequence, such that comparison can be done elementwise"""
         # Reduce prefix size by 'rotating' the repeated pattern
         while len(self.prefix) > 0 and self.prefix[-1] == self.pattern[-1]:
@@ -35,7 +35,9 @@ class Sequence:
         return self
 
     # Assumes the sequences are normalized
-    def __eq__(self, other: 'Sequence') -> bool:
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, Sequence):
+            return NotImplemented
         return self.prefix == other.prefix and self.pattern == other.pattern
 
     def __add__(self, other: 'Sequence') -> 'Sequence':
@@ -43,7 +45,7 @@ class Sequence:
         pattern_length = lcm(len(self.pattern), len(other.pattern))
         prefix1 = self.finite_prefix(prefix_length + pattern_length)
         prefix2 = other.finite_prefix(prefix_length + pattern_length)
-        summed = list(map(sum, zip(prefix1, prefix2)))
+        summed: List[int] = list(map(sum, zip(prefix1, prefix2)))
         return Sequence(summed[:prefix_length], summed[prefix_length:]).normalize()
 
     def prefixed_by(self, additional_prefix: List[int]) -> 'Sequence':

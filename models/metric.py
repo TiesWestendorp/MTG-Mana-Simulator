@@ -2,27 +2,28 @@
 Defines the Metric class which models functions that can be executed on traces.
 """
 
-from typing import Any, Callable, List
+from typing import Any, Callable, List, TypeVar
 from statistics import mean, median, mode, variance
+T = TypeVar('T')
 
 class Metric:
     """Computations that can be executed on the amount of mana in a turn (across traces)"""
 
-    mean = None
-    median = None
-    mode = None
-    variance = None
-    below_curve = None
-    on_curve = None
-    above_curve = None
+    mean : "Metric"
+    median : "Metric"
+    mode : "Metric"
+    variance : "Metric"
+    below_curve : "Metric"
+    on_curve : "Metric"
+    above_curve : "Metric"
 
-    def __init__(self, name: str, func: Callable[[int, List[int]], Any]) -> None:
+    def __init__(self, name: str, func: Callable[[int, List[int]], T]) -> None:
         self.name = name
         self.func = func
 
-    def compute(self, traces: List[int]) -> List[Any]:
+    def compute(self, traces: List[List[int]]) -> List[T]:
         """Compute the metric on the given traces"""
-        return [self.func(turn+1, manas_by_turn) for turn,manas_by_turn in enumerate(zip(*traces))]
+        return [self.func(t+1, list(ms)) for t,ms in enumerate(zip(*traces))]
 
     @staticmethod
     def minimum_mana(min_mana: int) -> "Metric":

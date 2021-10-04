@@ -5,6 +5,7 @@ solely on a given context, and playing a card modifies a context.
 
 from typing import List, Optional
 from random import sample
+from models.card import Card
 
 class Context:
     """Snapshot of the state at a particular point in time"""
@@ -24,8 +25,8 @@ class Context:
         self.remaining = remaining if remaining is not None else []
 
         # Caching behaviours
-        self.cached_playable_cards = None
-        self.cached_max_attainable_mana = None
+        self.cached_playable_cards: Optional[List[int]] = None
+        self.cached_max_attainable_mana: Optional[int] = None
 
     def lands_in_hand(self) -> List["Card"]:
         """List of all land cards in hand"""
@@ -39,7 +40,8 @@ class Context:
         """Randomly removes a number of lands from the deck"""
         if number > 0:
             land_indices = sample([k for k,card in enumerate(self.remaining) if card.land], number)
-            for land_index in land_indices.sort(reverse=True):
+            land_indices.sort(reverse=True)
+            for land_index in land_indices:
                 self.remaining.pop(land_index)
 
     def draw_cards(self, number: int) -> None:

@@ -13,10 +13,10 @@ from models.sequence import Sequence
 class Card:
     """Simplified model of a Magic card"""
 
-    untapped_land = None
-    tapped_land = None
-    cantrip = None
-    filler = None
+    untapped_land : "Card"
+    tapped_land : "Card"
+    cantrip : "Card"
+    filler : "Card"
 
     def __init__(self, name: str = "", *,
             land: bool = False,
@@ -28,12 +28,12 @@ class Card:
         self.name = name
         self.land = land
         self.cost = cost
-        self.mana_sequence = mana_sequence if mana_sequence is not None else Sequence.zero
-        self.draw_sequence = draw_sequence if draw_sequence is not None else Sequence.zero
-        self.gold_sequence = gold_sequence if gold_sequence is not None else Sequence.zero
+        self.mana_sequence: Sequence = mana_sequence if mana_sequence is not None else Sequence.zero
+        self.draw_sequence: Sequence = draw_sequence if draw_sequence is not None else Sequence.zero
+        self.gold_sequence: Sequence = gold_sequence if gold_sequence is not None else Sequence.zero
         self.lands_removed = lands_removed
 
-    def approximate_net_mana_sequence(self) -> "Sequence":
+    def approximate_net_mana_sequence(self) -> Sequence:
         """ (assuming gold is spent immediately)"""
         return self.mana_sequence + self.gold_sequence + Sequence.once(-self.cost)
 
@@ -69,4 +69,4 @@ class Card:
 Card.untapped_land = Card("Untapped land", land=True, mana_sequence=Sequence.one)
 Card.tapped_land   = Card("Tapped land", land=True, mana_sequence=Sequence.one.prefixed_by([0]))
 Card.cantrip       = Card.draw_spell(1, 1)
-Card.filler        = Card("Filler", cost=float('inf'))
+Card.filler        = Card("Filler", cost=20000)

@@ -2,18 +2,22 @@
 Defines the Experiment class which is the main class of this module.
 """
 
-from typing import List
+from typing import Any, Dict, List
 from random import shuffle
+from models.ai import AI
+from models.card import Card
+from models.metric import Metric
 
 class Experiment:
     """Wrapper class for simulating multiple runs"""
 
-    def __init__(self, deck: List["Card"], ai: "AI", turns: int, repeats: int, *, options=None):
+    def __init__(self, deck: List[Card], ai: AI, turns: int, repeats: int, *, options=None):
         self.deck    = deck
         self.ai      = ai
         self.turns   = turns
         self.repeats = repeats
         self.options = options if options is not None else {}
+        self.traces : List[List[int]] = self.repeats*[[0]]
         self.run()
 
     def run(self) -> None:
@@ -23,7 +27,6 @@ class Experiment:
             if 'variance_reduction' in self.options:
                 variance_reduction = self.options['variance_reduction']
 
-        self.traces = self.repeats*[None]
         for iteration in range(self.repeats):
             if variance_reduction == 'antithetic-variates':
                 # https://en.wikipedia.org/wiki/Antithetic_variates
@@ -36,6 +39,6 @@ class Experiment:
 
             self.traces[iteration] = self.ai.run(deck=self.deck, turns=self.turns)
 
-    def evaluate(self, metrics: List["Metric"]):
+    def evaluate(self, metrics: List[Metric]) -> Dict[str, List[Any]]:
         """Evaluate given metrics on the generated traces"""
-        return dict(map(lambda metric: [metric.name, metric.compute(self.traces)], metrics))
+        return dict(map(lambda metric: (metric.name, metric.compute(self.traces)), metrics))
