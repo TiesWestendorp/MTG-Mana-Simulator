@@ -30,4 +30,5 @@ jobs:
         mypy $(git ls-files '*.py')
     - name: Test with pytest
       run: |
+        touch conftest.py
         pytest
