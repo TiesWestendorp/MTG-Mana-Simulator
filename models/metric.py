@@ -4,7 +4,7 @@ Defines the Metric class which models functions that can be executed on traces.
 
 from typing import Callable, List, TypeVar
 from statistics import mean, median, mode, variance
-TYPE = TypeVar('T')
+TYPE = TypeVar('TYPE')
 
 class Metric:
     """Computations that can be executed on the amount of mana in a turn (across traces)"""
