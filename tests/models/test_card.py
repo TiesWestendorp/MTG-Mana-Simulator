@@ -1,7 +1,14 @@
+"""
+Unit tests for Card class
+"""
+
 from models.card import Card
 from models.sequence import Sequence
 
 def test_static_instances():
+    """
+    Test properties of static instances
+    """
     assert Card.untapped_land.name == "Untapped land"
     assert Card.untapped_land.land == True
     assert Card.untapped_land.cost == 0
