@@ -5,6 +5,88 @@ Unit tests for Card class
 from models.card import Card
 from models.sequence import Sequence
 
+def test_approximate_net_mana_sequence():
+    """
+    Test approximate_net_mana_sequence instance method
+    """
+    assert Card().approximate_net_mana_sequence() == Sequence.zero
+    for gold,mana,cost in zip(range(4), range(4), range(4)):
+        gold_sequence = Sequence.repeat(gold)
+        mana_sequence = Sequence.repeat(mana)
+        card = Card(gold_sequence=gold_sequence, mana_sequence=mana_sequence, cost=cost)
+        assert card.approximate_net_mana_sequence() == Sequence([gold+mana-cost], [gold+mana])
+
+def test_netgain():
+    """
+    Test netgain instance method
+    """
+    assert Card().netgain() == 0
+    for gold,mana,cost in zip(range(4), range(4), range(4)):
+        gold_sequence = Sequence.repeat(gold)
+        mana_sequence = Sequence.repeat(mana)
+        card = Card(gold_sequence=gold_sequence, mana_sequence=mana_sequence, cost=cost)
+        assert card.netgain() == gold+mana-cost
+
+def test_is_ramp():
+    """
+    Test is_ramp instance method
+    """
+    assert Card().is_ramp() is False
+    assert Card(gold_sequence=Sequence.zero).is_ramp() is False
+    assert Card(gold_sequence=Sequence.one).is_ramp() is True
+    assert Card(gold_sequence=Sequence([0], [1])).is_ramp() is True
+    assert Card(mana_sequence=Sequence.zero).is_ramp() is False
+    assert Card(mana_sequence=Sequence.one).is_ramp() is True
+    assert Card(mana_sequence=Sequence([0], [1])).is_ramp() is True
+
+def test_is_draw():
+    """
+    Test is_draw instance method
+    """
+    assert Card().is_draw() is False
+    assert Card(draw_sequence=Sequence.zero).is_draw() is False
+    assert Card(draw_sequence=Sequence.one).is_draw() is True
+    assert Card(draw_sequence=Sequence([0], [1])).is_draw() is True
+
+def test_untapped_rock():
+    """
+    Test untapped_rock static method
+    """
+    for i,j in zip(range(4), range(4)):
+        spell = Card.untapped_rock(i, j)
+        assert spell.land is False
+        assert spell.cost == i
+        assert spell.mana_sequence == Sequence.repeat(j)
+        assert spell.draw_sequence == Sequence.zero
+        assert spell.gold_sequence == Sequence.zero
+        assert spell.lands_removed == 0
+
+def test_tapped_rock():
+    """
+    Test tapped_rock static method
+    """
+    for i,j in zip(range(4), range(4)):
+        spell = Card.tapped_rock(i, j)
+        assert spell.land is False
+        assert spell.cost == i
+        assert spell.mana_sequence == Sequence.repeat(j).prefixed_by([0])
+        assert spell.draw_sequence == Sequence.zero
+        assert spell.gold_sequence == Sequence.zero
+        assert spell.lands_removed == 0
+
+def test_draw_spell():
+    """
+    Test draw_spell static method
+    """
+    for i,j in zip(range(4), range(4)):
+        spell = Card.draw_spell(i, j)
+        assert spell.land is False
+        assert spell.cost == i
+        assert spell.mana_sequence == Sequence.zero
+        assert spell.draw_sequence == Sequence.once(j)
+        assert spell.gold_sequence == Sequence.zero
+        assert spell.lands_removed == 0
+
 def test_static_instances():
     """
     Test properties of static instances
