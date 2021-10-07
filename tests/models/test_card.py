@@ -52,11 +52,11 @@ def test_untapped_rock():
     """
     Test untapped_rock static method
     """
-    for i,j in zip(range(4), range(4)):
-        spell = Card.untapped_rock(i, j)
+    for cost,mana in zip(range(4), range(4)):
+        spell = Card.untapped_rock(cost, mana)
         assert spell.land is False
-        assert spell.cost == i
-        assert spell.mana_sequence == Sequence.repeat(j)
+        assert spell.cost == cost
+        assert spell.mana_sequence == Sequence.repeat(mana)
         assert spell.draw_sequence == Sequence.zero
         assert spell.gold_sequence == Sequence.zero
         assert spell.lands_removed == 0
@@ -65,11 +65,11 @@ def test_tapped_rock():
     """
     Test tapped_rock static method
     """
-    for i,j in zip(range(4), range(4)):
-        spell = Card.tapped_rock(i, j)
+    for cost,mana in zip(range(4), range(4)):
+        spell = Card.tapped_rock(cost, mana)
         assert spell.land is False
-        assert spell.cost == i
-        assert spell.mana_sequence == Sequence.repeat(j).prefixed_by([0])
+        assert spell.cost == cost
+        assert spell.mana_sequence == Sequence.repeat(mana).prefixed_by([0])
         assert spell.draw_sequence == Sequence.zero
         assert spell.gold_sequence == Sequence.zero
         assert spell.lands_removed == 0
@@ -78,12 +78,12 @@ def test_draw_spell():
     """
     Test draw_spell static method
     """
-    for i,j in zip(range(4), range(4)):
-        spell = Card.draw_spell(i, j)
+    for cost,mana in zip(range(4), range(4)):
+        spell = Card.draw_spell(cost, mana)
         assert spell.land is False
-        assert spell.cost == i
+        assert spell.cost == cost
         assert spell.mana_sequence == Sequence.zero
-        assert spell.draw_sequence == Sequence.once(j)
+        assert spell.draw_sequence == Sequence.once(mana)
         assert spell.gold_sequence == Sequence.zero
         assert spell.lands_removed == 0
 
