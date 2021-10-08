@@ -9,6 +9,7 @@ TYPE = TypeVar('TYPE')
 class Metric:
     """Computations that can be executed on the amount of mana in a turn (across traces)"""
 
+    identity : "Metric"
     mean : "Metric"
     median : "Metric"
     mode : "Metric"
@@ -16,6 +17,8 @@ class Metric:
     below_curve : "Metric"
     on_curve : "Metric"
     above_curve : "Metric"
+    minimum : "Metric"
+    maximum : "Metric"
 
     def __init__(self, name: str, func: Callable[[int, List[int]], TYPE]) -> None:
         self.name = name
@@ -37,6 +40,7 @@ class Metric:
         func = lambda t,ms: sorted(ms)[round(len(ms)*fraction)-1]
         return Metric(f"{fraction}th percentile", func)
 
+Metric.identity    = Metric("Identity",     lambda t,ms: (t,ms))
 Metric.mean        = Metric("Mean",         lambda t,ms: mean(ms))
 Metric.median      = Metric("Median",       lambda t,ms: int(median(ms)))
 Metric.mode        = Metric("Mode",         lambda t,ms: mode(ms))
@@ -44,3 +48,5 @@ Metric.variance    = Metric("Variance",     lambda t,ms: variance(ms))
 Metric.below_curve = Metric("<'turn' mana", lambda t,ms: sum(m <  t for m in ms)/len(ms))
 Metric.on_curve    = Metric("≥'turn' mana", lambda t,ms: sum(m >= t for m in ms)/len(ms))
 Metric.above_curve = Metric(">'turn' mana", lambda t,ms: sum(m >  t for m in ms)/len(ms))
+Metric.minimum     = Metric("Minimum",      lambda t,ms: min(ms))
+Metric.maximum     = Metric("Maximum",      lambda t,ms: max(ms))
