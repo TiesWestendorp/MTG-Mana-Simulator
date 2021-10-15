@@ -33,7 +33,7 @@ class AI:
                               remaining=copied_deck[keepable_cards:])
             card_indices = self.mulligan(context, keepable_cards)
             if card_indices is None or\
-               len(card_indices)>keepable_cards or\
+               len(card_indices)!=keepable_cards or\
                len(card_indices)!=len(set(card_indices)):
                 # Shuffle and offer to mulligan again, if AI decided to mulligan,
                 # or the choice was invalid.
@@ -83,14 +83,19 @@ class AI:
         return mana_per_turn
 
     @staticmethod
-    def mulligan_too_few_lands(context: Context,
-                               keepable_cards: int,
-                               max_times: int,
-                               min_lands: int) -> None:
-        """Mulligan at most some number of times, whenever having less than some number of lands"""
-        if times <= max_times and sum([card.land for card in context.hand]) >= min_lands:
-            #
+    def minimum_land_mulligan(min_cards: int, min_lands: int) -> Callable[[Context, int], Optional[List[int]]]:
+        """Mulligan to at most some number of cards, whenever having less than some number of lands"""
+        def func(context, keepable_cards):
+            if keepable_cards <= min_cards or sum([card.land for card in context.hand]) >= min_lands:
+                # Keep the land cards of the dealt hand if the number of cards gets too low,
+                # or the desired minimum number of lands is attained.
+                land_indices    = [index for index,card in enumerate(context.hand) if card.land]
+                nonland_indices = [index for index,card in enumerate(context.hand) if not card.land]
+                return (land_indices + nonland_indices)[:keepable_cards]
+            # Mulligan
             return None
+
+        return func
 
 def improved_land_choice(context: Context) -> Optional[int]:
     """Play untapped land if needed, then ramp, then draw, then randomly choose a playable card"""
@@ -120,4 +125,4 @@ def improved_land_choice(context: Context) -> Optional[int]:
 
 AI.dud        = AI()
 AI.naive      = AI(choose=lambda context: choice(context.playable_cards()))
-AI.less_naive = AI(choose=improved_land_choice)
+AI.less_naive = AI(mulligan=AI.minimum_land_mulligan(5, 3), choose=improved_land_choice)
