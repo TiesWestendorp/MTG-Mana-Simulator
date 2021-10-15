@@ -33,7 +33,7 @@ def test_compute():
         with raises(StatisticsError):
             Metric.mode.compute(traces())
     else:
-        assert Metric.mode.compute(traces()) == [1, 2, 3]
+        assert similar_lists(Metric.mode.compute(traces()),    [1, 2, 3])
     assert similar_lists(Metric.variance.compute(traces()),    [1/3, 1+1/3, 1+2/3])
     assert similar_lists(Metric.below_curve.compute(traces()), [0.5, 0.5, 0.75])
     assert similar_lists(Metric.on_curve.compute(traces()),    [0.5, 0.5, 0.25])
