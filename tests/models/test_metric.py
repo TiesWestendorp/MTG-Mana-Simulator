@@ -2,6 +2,7 @@
 Unit tests for Metric class
 """
 
+from sys import version_info
 from statistics import StatisticsError
 from pytest import raises
 from models.metric import Metric
@@ -28,8 +29,11 @@ def test_compute():
         (3, [3,2,1,0])]
     assert similar_lists(Metric.mean.compute(traces()),        [0.5, 1.0,  1.5])
     assert similar_lists(Metric.median.compute(traces()),      [0, 1, 1])
-    with raises(StatisticsError):
-        Metric.mode.compute(traces())
+    if version_info[0] >= 3 and version_info[1] >= 8:
+        with raises(StatisticsError):
+            Metric.mode.compute(traces())
+    else:
+        assert similar_lists(Metric.mode.compute(traces()),    [0, 0, 0])
     assert similar_lists(Metric.variance.compute(traces()),    [1/3, 1+1/3, 1+2/3])
     assert similar_lists(Metric.below_curve.compute(traces()), [0.5, 0.5, 0.75])
     assert similar_lists(Metric.on_curve.compute(traces()),    [0.5, 0.5, 0.25])
