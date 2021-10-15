@@ -29,7 +29,7 @@ def test_compute():
         (3, [3,2,1,0])]
     assert similar_lists(Metric.mean.compute(traces()),        [0.5, 1.0,  1.5])
     assert similar_lists(Metric.median.compute(traces()),      [0, 1, 1])
-    if version_info[0] >= 3 and version_info[1] < 8:
+    if [version_info[0], version_info[1]] < [3, 8]:
         with raises(StatisticsError):
             Metric.mode.compute(traces())
     else:
