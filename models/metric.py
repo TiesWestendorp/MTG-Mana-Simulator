@@ -37,7 +37,7 @@ class Metric:
     @staticmethod
     def percentile(fraction: float) -> "Metric":
         """Percentile score"""
-        func = lambda t,ms: sorted(ms)[round(len(ms)*fraction)-1]
+        func = lambda t,ms: sorted(ms)[min(len(ms), max(0, round(len(ms)*fraction)-1))]
         return Metric(f"{fraction}th percentile", func)
 
 Metric.identity    = Metric("Identity",     lambda t,ms: (t,ms))
