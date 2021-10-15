@@ -4,7 +4,7 @@ or not, and which cards should be played given a certain 'context'.
 """
 
 from typing import Callable, Iterator, List, Optional
-from random import choice
+from random import choice, shuffle
 from models.card import Card
 from models.context import Context
 from models.sequence import Sequence
@@ -17,9 +17,9 @@ class AI:
     less_naive : "AI"
 
     def __init__(self, *,
-            mulligan = None,
+            mulligan: Optional[Callable[[Context, int], Optional[List[int]]]] = None,
             choose: Optional[Callable[[Context], Optional[int]]] = None) -> None:
-        self.mulligan = mulligan if mulligan is not None else (lambda _: False)
+        self.mulligan = mulligan if mulligan is not None else (lambda _,__: list(range(7)))
         self.choose   = choose   if choose   is not None else (lambda _: None)
 
     def run(self, *,
@@ -28,8 +28,24 @@ class AI:
         """Simulate playing given deck for some number of turns and return maximum mana per turn"""
         copied_deck = deck[:]
 
-        # allow mulligan
-        context = Context(hand=copied_deck[0:7], remaining=copied_deck[7:], land_for_turn=False)
+        for keepable_cards in reversed(range(8)):
+            context = Context(hand=copied_deck[:keepable_cards],
+                              remaining=copied_deck[keepable_cards:])
+            card_indices = self.mulligan(context, keepable_cards)
+            if card_indices is None or\
+               len(card_indices)>keepable_cards or\
+               len(card_indices)!=len(set(card_indices)):
+                # Shuffle and offer to mulligan again, if AI decided to mulligan,
+                # or the choice was invalid.
+                shuffle(copied_deck)
+                continue
+
+            accepted_cards = [context.hand[index] for index in card_indices]
+            rejected_cards = [context.hand[index] for index in range(len(context.hand))
+                               if index not in card_indices]
+            context = Context(hand=accepted_cards,
+                              remaining=copied_deck[keepable_cards:]+rejected_cards)
+            break
 
         mana_generators: List[Iterator[int]] = []
         draw_generators: List[Iterator[int]] = [Sequence.one.generator()]
@@ -67,8 +83,14 @@ class AI:
         return mana_per_turn
 
     @staticmethod
-    def mulligan_too_few_lands(max_times: int, lands: int) -> None:
+    def mulligan_too_few_lands(context: Context,
+                               keepable_cards: int,
+                               max_times: int,
+                               min_lands: int) -> None:
         """Mulligan at most some number of times, whenever having less than some number of lands"""
+        if times <= max_times and sum([card.land for card in context.hand]) >= min_lands:
+            #
+            return None
 
 def improved_land_choice(context: Context) -> Optional[int]:
     """Play untapped land if needed, then ramp, then draw, then randomly choose a playable card"""
