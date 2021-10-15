@@ -2,11 +2,12 @@
 Unit tests for Metric class
 """
 
-from pytest import raises
 from statistics import StatisticsError
+from pytest import raises
 from models.metric import Metric
 
 def traces():
+    """Example traces"""
     trace1 = [1,2,3]
     trace2 = [1,2,2]
     trace3 = [0,0,1]
@@ -14,6 +15,7 @@ def traces():
     return [trace1, trace2, trace3, trace4]
 
 def similar_lists(list1, list2, eps=1e-3):
+    """Checks elementwise whether difference between two elements is at most some number"""
     return all(map(lambda pair: abs(pair[0]-pair[1])<eps, zip(list1, list2)))
 
 def test_compute():
