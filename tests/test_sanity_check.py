@@ -44,8 +44,38 @@ def test_sanity_check_3():
     Sanity check #3: replacing filler by ramp or card draw improves probability of
     being on-curve.
     """
+    seed(1337)
+
+    deck1 = 38*[Card.untapped_land] + 61*[Card.filler]
+    deck2 = 38*[Card.untapped_land] + 51*[Card.filler] + 10*[Card.untapped_rock(2, 1)]
+    experiment1 = Experiment(deck=deck1, ai=AI.naive, turns=8, repeats=100)
+    experiment2 = Experiment(deck=deck2, ai=AI.naive, turns=8, repeats=100)
+
+    results1 = list(experiment1.evaluate([Metric.on_curve]).values())[0]
+    results2 = list(experiment2.evaluate([Metric.on_curve]).values())[0]
+
+    for sample1,sample2 in zip(results1, results2):
+        assert sample1 - sample2 <= 0.05
 
 def test_sanity_check_4():
+    """
+    Sanity check #3: replacing filler by card draw improves probability of
+    being on-curve.
+    """
+    seed(1337)
+
+    deck1 = 38*[Card.untapped_land] + 61*[Card.filler]
+    deck2 = 38*[Card.untapped_land] + 51*[Card.filler] + 10*[Card.cantrip]
+    experiment1 = Experiment(deck=deck1, ai=AI.naive, turns=8, repeats=100)
+    experiment2 = Experiment(deck=deck2, ai=AI.naive, turns=8, repeats=100)
+
+    results1 = list(experiment1.evaluate([Metric.on_curve]).values())[0]
+    results2 = list(experiment2.evaluate([Metric.on_curve]).values())[0]
+
+    for sample1,sample2 in zip(results1, results2):
+        assert sample1 - sample2 <= 0.05
+
+def test_sanity_check_5():
     """
     Sanity check #4: removing lands from deck decreases chances of being on curve.
     """
@@ -53,11 +83,11 @@ def test_sanity_check_4():
 
     deck1 = 38*[Card.untapped_land] + 61*[Card.filler]
     deck2 = 30*[Card.untapped_land] + 69*[Card.filler]
-    experiment1 = Experiment(deck=deck1, ai=AI.naive, turns=8, repeats=5000)
-    experiment2 = Experiment(deck=deck2, ai=AI.naive, turns=8, repeats=5000)
+    experiment1 = Experiment(deck=deck1, ai=AI.naive, turns=8, repeats=100)
+    experiment2 = Experiment(deck=deck2, ai=AI.naive, turns=8, repeats=100)
 
-    results1 = list(experiment1.evaluate([Metric.mean]).values())[0]
-    results2 = list(experiment2.evaluate([Metric.mean]).values())[0]
+    results1 = list(experiment1.evaluate([Metric.on_curve]).values())[0]
+    results2 = list(experiment2.evaluate([Metric.on_curve]).values())[0]
 
     for sample1,sample2 in zip(results1, results2):
-        print(sample1 - sample2)
+        assert sample1 - sample2 >= -0.05
