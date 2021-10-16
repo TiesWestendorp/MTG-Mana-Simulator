@@ -11,7 +11,12 @@ from models.metric import Metric
 class Experiment:
     """Wrapper class for simulating multiple runs"""
 
-    def __init__(self, deck: List[Card], ai: AI, turns: int, repeats: int, *, options=None):
+    def __init__(self,
+            deck: List[Card],
+            ai: AI,
+            turns: int,
+            repeats: int,
+            *, options: Optional[Dict[str, Any]]=None) -> None:
         self.deck    = deck
         self.ai      = ai
         self.turns   = turns

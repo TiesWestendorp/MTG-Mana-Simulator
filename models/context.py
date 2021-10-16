@@ -3,7 +3,7 @@ Defines the Context class which is used to manage the state. AI decisions are ba
 solely on a given context, and playing a card modifies a context.
 """
 
-from typing import List, Optional
+from typing import Dict, Iterator, List, Optional
 from random import sample
 from models.card import Card
 
@@ -52,7 +52,7 @@ class Context:
             for _ in range(number):
                 self.hand.append(self.remaining.pop())
 
-    def play_card(self, card: Card):
+    def play_card(self, card: Card) -> Dict[str, Iterator[int]]:
         """Update the context by playing a given card"""
         self.cached_playable_cards = None
         generators = {
