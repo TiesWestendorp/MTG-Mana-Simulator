@@ -1,4 +1,4 @@
-__version__ = 'dev'
+__version__ = '0.1'
 
 from mtg_mana_simulator.ai import AI
 from mtg_mana_simulator.card import Card
