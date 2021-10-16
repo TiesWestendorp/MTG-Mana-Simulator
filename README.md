@@ -33,6 +33,7 @@ experiment.evaluate([Metric.on_curve])
 ![Comparison of mana per turn probabilities of decks with/without ramp/card draw](https://github.com/TiesWestendorp/MTG-Mana-Simulator/blob/master/Figure_1.png?raw=true)
 ![Probability of being on curve for decks with/without ramp/card draw](https://github.com/TiesWestendorp/MTG-Mana-Simulator/blob/master/Figure_2.png?raw=true)
 ![Average mana per turn for decks with/without ramp/card draw](https://github.com/TiesWestendorp/MTG-Mana-Simulator/blob/master/Figure_3.png?raw=true)
+![Percentiles of available mana for decks with/without ramp/card draw](https://github.com/TiesWestendorp/MTG-Mana-Simulator/blob/master/Figure_4.png?raw=true)
 
 Ramp package: 3 elves, 4 talismans, 4 lockets, 1 Smothering Tithe
 
