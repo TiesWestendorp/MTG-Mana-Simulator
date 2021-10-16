@@ -1,3 +1,8 @@
+"""
+mtg_mana_simulator allows you to quickly simulate Magic: the Gathering plays from a single
+player's perspective to estimate certain measures related to available mana throughout the game.
+"""
+
 __version__ = '0.1'
 
 from mtg_mana_simulator.ai import AI
