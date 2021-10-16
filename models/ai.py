@@ -35,27 +35,25 @@ class AI:
         Keep applying chosen mulligan strategy until a valid choice is made, or the hand is empty
         """
         for keepable_cards in reversed(range(1,8)):
-            context = Context(hand=deck[:7],
-                              remaining=deck[7:])
-            card_indices = self.mulligan(context, keepable_cards)
-            if card_indices is None or\
-               len(card_indices)!=keepable_cards or\
-               len(card_indices)!=len(set(card_indices)):
-                # Shuffle and offer to mulligan again, if AI decided to mulligan,
-                # or the choice was invalid.
-                shuffle(deck)
-                continue
+            hand = deck[:7]
+            remaining = deck[7:]
 
-            # Otherwise, if choice was valid, process the accepted cards
-            accepted, rejected = [], []
-            for index,card in enumerate(context.hand):
-                if index in card_indices:
-                    accepted.append(card)
-                else:
-                    rejected.append(card)
+            card_indices = self.mulligan(Context(hand=hand, remaining=remaining), keepable_cards)
+            if card_indices is not None and\
+               len(card_indices)==keepable_cards and\
+               len(card_indices)==len(set(card_indices)) and\
+               all([index >= 0 and index < 7 for index in card_indices]):
+                # If AI decided to keep, and the choice was valid, process the accepted cards
+                accepted, rejected = [], []
+                for index,card in enumerate(hand):
+                    if index in card_indices:
+                        accepted.append(card)
+                    else:
+                        rejected.append(card)
+                return Context(hand=accepted, remaining=remaining+rejected)
 
-            return Context(hand=accepted,
-                           remaining=deck[7:]+rejected)
+            # Otherwise, shuffle and offer to mulligan again, with one less card
+            shuffle(deck)
         return Context(hand=[], remaining=deck)
 
     def run(self, *,
