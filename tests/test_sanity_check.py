@@ -4,7 +4,10 @@ properties that the system as a whole should exhibit.
 """
 
 from random import seed
-from models import AI, Card, Experiment, Metric
+from models.ai import AI
+from models.card import Card
+from models.experiment import Experiment
+from models.metric import Metric
 
 def test_sanity_check_1():
     """

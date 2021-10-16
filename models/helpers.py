@@ -1,4 +1,6 @@
-"""Helper methods"""
+"""
+Helper methods
+"""
 
 from typing import List
 from math import gcd, sqrt
