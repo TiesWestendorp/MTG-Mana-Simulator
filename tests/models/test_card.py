@@ -2,8 +2,8 @@
 Unit tests for Card class
 """
 
-from models.card import Card
-from models.sequence import Sequence
+from mtg_mana_simulator.card import Card
+from mtg_mana_simulator.sequence import Sequence
 
 def test_approximate_net_mana_sequence():
     """

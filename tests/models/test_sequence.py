@@ -2,7 +2,7 @@
 Unit tests for Sequence class
 """
 
-from models.sequence import Sequence
+from mtg_mana_simulator.sequence import Sequence
 
 def test_normalize():
     """

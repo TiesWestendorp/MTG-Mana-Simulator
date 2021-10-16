@@ -5,7 +5,7 @@ Unit tests for Metric class
 from sys import version_info
 from statistics import StatisticsError
 from pytest import raises
-from models.metric import Metric
+from mtg_mana_simulator.metric import Metric
 
 def traces():
     """Example traces"""
