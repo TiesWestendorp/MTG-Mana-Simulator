@@ -2,7 +2,7 @@
 Defines the Experiment class which is the main class of this module.
 """
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from random import shuffle
 from models.ai import AI
 from models.card import Card
