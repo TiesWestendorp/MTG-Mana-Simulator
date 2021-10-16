@@ -82,7 +82,7 @@ class Context:
             if not self.land_for_turn:
                 max_attainable_mana += max([0]+[card.netgain() for card in self.lands_in_hand()])
             for card in sorted(self.nonlands_in_hand(), key=lambda card: card.cost):
-                max_attainable_mana += max([0, card.netgain()])
+                max_attainable_mana += max(0, card.netgain())
                 # Cards are traversed in cost order, so we can stop early if we can't pay the cost
                 if card.cost > max_attainable_mana:
                     break

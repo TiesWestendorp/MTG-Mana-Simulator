@@ -72,9 +72,9 @@ class AI:
         for turn in range(turns):
             # Draw as much cards as you're supposed to this turn
             context.turn  = turn+1
-            context.draw_cards(sum([generator.__next__() for generator in draw_generators]))
-            context.mana  = sum([generator.__next__() for generator in mana_generators])
-            context.gold += sum([generator.__next__() for generator in gold_generators])
+            context.draw_cards(sum(generator.__next__() for generator in draw_generators))
+            context.mana  = sum(generator.__next__() for generator in mana_generators)
+            context.gold += sum(generator.__next__() for generator in gold_generators)
             context.land_for_turn = False
 
             # Determine maximum attainable mana before cards have been played, and set
@@ -113,7 +113,7 @@ class AI:
         """
         def func(context, keepable_cards):
             if keepable_cards <= min_cards or\
-               sum([card.land for card in context.hand]) >= min_lands:
+               sum(card.land for card in context.hand) >= min_lands:
                 # Keep the land cards of the dealt hand if the number of cards gets too low,
                 # or the desired minimum number of lands is attained.
                 lands, nonlands = [], []
