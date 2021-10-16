@@ -20,12 +20,15 @@ class AI:
     dud : "AI"
     naive : "AI"
     less_naive : "AI"
+    never_mulligan  : Mulligan = lambda _,__: list(range(7))
+    never_choose    : Choose   = lambda _: None
+    randomly_choose : Choose   = lambda context: choice(context.playable_cards())
 
     def __init__(self, *,
             mulligan: Optional[Mulligan] = None,
             choose: Optional[Choose] = None) -> None:
-        self.mulligan = mulligan if mulligan is not None else (lambda _,__: list(range(7)))
-        self.choose   = choose   if choose   is not None else (lambda _: None)
+        self.mulligan = mulligan if mulligan is not None else AI.never_mulligan
+        self.choose   = choose   if choose   is not None else AI.never_choose
 
     def execute_mulligan(self, deck: List[Card]) -> Context:
         """
@@ -75,8 +78,14 @@ class AI:
             context.mana  = sum([generator.__next__() for generator in mana_generators])
             context.gold += sum([generator.__next__() for generator in gold_generators])
             context.land_for_turn = False
-            mana_per_turn[turn] = context.max_attainable_mana()
 
+            # Determine maximum attainable mana before cards have been played, and set
+            # the value of all following turns to that value. I.e. the player could
+            # have decided to not do something this turn, but to postpone it to a later
+            # turn. This is relevant to decrease variance when cards like Dark Ritual
+            # appear in a deck.
+            max_attainable_mana = max(mana_per_turn[turn], context.max_attainable_mana())
+            mana_per_turn[turn:] = [max_attainable_mana]*(turns-turn)
             while True:
                 playable_cards = context.playable_cards()
                 if len(playable_cards) == 0:
@@ -95,7 +104,8 @@ class AI:
                 gold_generators.append(generators['gold'])
 
                 # Maximum attainable mana may have changed after drawing cards
-                mana_per_turn[turn] = max(mana_per_turn[turn], context.max_attainable_mana())
+                max_attainable_mana = max(mana_per_turn[turn], context.max_attainable_mana())
+                mana_per_turn[turn:] = [max_attainable_mana]*(turns-turn)
         return mana_per_turn
 
     @staticmethod
@@ -148,5 +158,5 @@ def improved_land_choice(context: Context) -> Optional[int]:
     return choice(playable_cards)
 
 AI.dud        = AI()
-AI.naive      = AI(choose=lambda context: choice(context.playable_cards()))
+AI.naive      = AI(choose=AI.randomly_choose)
 AI.less_naive = AI(mulligan=AI.minimum_land_mulligan(5, 3), choose=improved_land_choice)
