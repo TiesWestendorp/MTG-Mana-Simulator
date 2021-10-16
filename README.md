@@ -7,10 +7,10 @@ This library models simplified "Magic: the Gathering" playthroughs with the purp
 ```
 from models import AI, Card, Experiment, Metric, Sequence
 
-dark_ritual = Card(cost=1, mana_sequence=Sequence.once(3))
-phyrexian_arena = Card(cost=3, draw_sequence=Sequence.repeat(1).prefixed_by([0]))
-signet = Card.untapped_rock(2, 1)
-locket = Card.untapped_rock(3, 1)
+dark_ritual     = Card(cost=1, mana_sequence=Sequence.once(3))
+phyrexian_arena = Card(cost=3, draw_sequence=Sequence.one.prefixed_by([0]))
+signet          = Card.untapped_rock(2, 1)
+locket          = Card.untapped_rock(3, 1)
 
 deck = [
   dark_ritual,
