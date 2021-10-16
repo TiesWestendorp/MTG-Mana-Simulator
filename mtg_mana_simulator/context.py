@@ -5,7 +5,7 @@ solely on a given context, and playing a card modifies a context.
 
 from typing import Dict, Iterator, List, Optional
 from random import sample
-from models.card import Card
+from mtg_mana_simulator.card import Card
 
 class Context:
     """Snapshot of the state at a particular point in time"""

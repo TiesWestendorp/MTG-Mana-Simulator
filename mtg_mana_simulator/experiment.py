@@ -4,9 +4,9 @@ Defines the Experiment class which is the main class of this module.
 
 from typing import Any, Dict, List, Optional
 from random import shuffle
-from models.ai import AI
-from models.card import Card
-from models.metric import Metric
+from mtg_mana_simulator.ai import AI
+from mtg_mana_simulator.card import Card
+from mtg_mana_simulator.metric import Metric
 
 class Experiment:
     """Wrapper class for simulating multiple runs"""

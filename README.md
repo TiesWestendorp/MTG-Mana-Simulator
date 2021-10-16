@@ -3,9 +3,17 @@
 
 This library models simplified "Magic: the Gathering" playthroughs with the purpose of tracking available mana in each turn. This is modeled as experiments that can be run for a given number of turns and repetitions, where some AI agent decides which cards to play in each turn. The cards themselves are heavily simplified, among others, the following attributes are modeled: the generated mana and gold/treasure when played and on every subsequent turn, the card draw attained when played and on every subsequent turn, the cost of playing it, and whether the card is a land or not. After an experiment has run, metrics can be applied to the generated traces, e.g. to find the probability of being on curve or above in each turn.
 
+### Installation
+
+This package can be installed using `pip`, by executing the following command in your console:
+```
+pip install git@github.com:TiesWestendorp/MTG-Mana-Simulator.git#egg=mtg_mana_simulator
+```
+Afterwards, you can test whether the package was installed correctly by executing the following example code:
+
 ### Example
 ```
-from models import AI, Card, Experiment, Metric, Sequence
+from mtg_mana_simulator import AI, Card, Experiment, Metric, Sequence
 
 dark_ritual     = Card(cost=1, mana_sequence=Sequence.once(3))
 phyrexian_arena = Card(cost=3, draw_sequence=Sequence.one.prefixed_by([0]))

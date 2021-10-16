@@ -6,7 +6,7 @@ them.
 
 from typing import List, Iterator
 from math import ceil
-from models.helpers import divisors, lcm
+from mtg_mana_simulator.helpers import divisors, lcm
 
 class Sequence:
     """Infinite sequence of integers consisting of a finite prefix and a repeating pattern"""

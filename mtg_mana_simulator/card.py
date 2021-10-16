@@ -8,7 +8,7 @@ a number of lands from the remaining deck.
 """
 
 from typing import Optional
-from models.sequence import Sequence
+from mtg_mana_simulator.sequence import Sequence
 
 class Card:
     """Simplified model of a Magic card"""

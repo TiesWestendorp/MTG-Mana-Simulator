@@ -5,9 +5,9 @@ or not, and which cards should be played given a certain 'context'.
 
 from typing import Callable, Iterator, List, Optional
 from random import choice, shuffle
-from models.card import Card
-from models.context import Context
-from models.sequence import Sequence
+from mtg_mana_simulator.card import Card
+from mtg_mana_simulator.context import Context
+from mtg_mana_simulator.sequence import Sequence
 
 Mulligan = Callable[[Context, int], Optional[List[int]]]
 Choose   = Callable[[Context],      Optional[int]]
