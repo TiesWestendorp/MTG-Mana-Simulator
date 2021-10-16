@@ -42,7 +42,7 @@ class AI:
             if card_indices is not None and\
                len(card_indices)==keepable_cards and\
                len(card_indices)==len(set(card_indices)) and\
-               all([index >= 0 and index < 7 for index in card_indices]):
+               all(0 <= index < 7 for index in card_indices):
                 # If AI decided to keep, and the choice was valid, process the accepted cards
                 accepted, rejected = [], []
                 for index,card in enumerate(hand):
