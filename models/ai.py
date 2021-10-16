@@ -27,7 +27,7 @@ class AI:
         self.mulligan = mulligan if mulligan is not None else (lambda _,__: list(range(7)))
         self.choose   = choose   if choose   is not None else (lambda _: None)
 
-    def execute_mulligan(self, deck) -> Context:
+    def execute_mulligan(self, deck: List[Card]) -> Context:
         """
         Keep applying chosen mulligan strategy until a valid choice is made, or the hand is empty
         """
