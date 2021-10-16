@@ -19,13 +19,13 @@ deck = [
   *[Card.cantrip]*3,
   *[Card.untapped_land]*30,
   *[Card.tapped_land]*8,
-  *[Card.filler]*54]
+  *[Card.filler]*54
 ]
 
-experiment = Experiment(deck=deck, ai=AI.naive, turns=10, repeats=5000)
+experiment = Experiment(deck=deck, ai=AI.naive, turns=10, repeats=10000)
 experiment.evaluate([Metric.on_curve])
 
-# {"≥'turn' mana": [0.9538, 0.8844, 0.8146, 0.7208, 0.6134, 0.4938, 0.3948, 0.2998, 0.2168, 0.163]}
+# {"≥'turn' mana": [0.9554, 0.8848, 0.8128, 0.7195, 0.6196, 0.5061, 0.3904, 0.2906, 0.2199, 0.1601]}
 # E.g. there's a 72% chance to be on or ahead of curve in turn 4
 ```
 
