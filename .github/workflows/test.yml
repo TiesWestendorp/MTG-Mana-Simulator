@@ -27,7 +27,7 @@ jobs:
         pylint $(git ls-files '*.py' | grep -v "examples/")
     - name: Checking type annotations with mypy
       run: |
-        mypy $(git ls-files '*.py' | grep -v "examples/","setup.py")
+        mypy $(git ls-files '*.py' | grep -v "examples/" | grep -v "setup.py")
     - name: Test with pytest
       run: |
         pytest
