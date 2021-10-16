@@ -26,6 +26,7 @@ experiment = Experiment(deck=deck, ai=AI.naive, turns=10, repeats=5000)
 experiment.evaluate([Metric.on_curve])
 
 # {"≥'turn' mana": [0.9538, 0.8844, 0.8146, 0.7208, 0.6134, 0.4938, 0.3948, 0.2998, 0.2168, 0.163]}
+# E.g. there's a 72% chance to be on or ahead of curve in turn 4
 ```
 
 ### Output of examples/main.py
