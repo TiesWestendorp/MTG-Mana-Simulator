@@ -7,7 +7,7 @@ This library models simplified "Magic: the Gathering" playthroughs with the purp
 
 This package can be installed using `pip`, by executing the following command in your console:
 ```
-pip install git@github.com:TiesWestendorp/MTG-Mana-Simulator.git#egg=mtg_mana_simulator
+pip install git+git://github.com/TiesWestendorp/MTG-Mana-Simulator.git#egg=mtg_mana_simulator
 ```
 Afterwards, you can test whether the package was installed correctly by executing the following example code:
 
