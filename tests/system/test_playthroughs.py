@@ -11,16 +11,11 @@ from mtg_mana_simulator.sequence import Sequence
 def test_playthrough1():
     azusa = Card(land_sequence=Sequence.repeat(2))
     hand = [ azusa, *[Card.untapped_land]*4 ]
-    context = Context(hand=hand, deck=[], mana=3)
-    assert context.land == 1
+    context = Context(hand=hand, mana=3)
     context.play_card(0) # Play Azusa
-
-    context.play_card(0) # Play first land
-    context.play_card(0) # Play second land
-    context.play_card(0) # Play third land
-
-    print("BLA")
-    print(context.land)
-    print(context.zones["hand"][0].is_playable(context))
-
+    for _ in range(3):
+        assert context.zones["hand"][0].is_playable(context)
+        context.play_card(0) # Play nth land
     assert not context.zones["hand"][0].is_playable(context)
+    with raises(ValueError):
+        context.play_card(0) # Can't play fourth land
