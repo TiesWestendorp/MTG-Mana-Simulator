@@ -106,7 +106,7 @@ class AI:
                     break
 
                 # Play chosen card
-                generators = context.play_card(context.zones["hand"].pop(chosen))
+                generators = context.play_card(chosen)
                 mana_generators.append(generators['mana'])
                 draw_generators.append(generators['draw'])
                 gold_generators.append(generators['gold'])

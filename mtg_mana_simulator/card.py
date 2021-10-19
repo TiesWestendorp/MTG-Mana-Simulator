@@ -20,7 +20,7 @@ class Card:
 
     def __init__(self, name: str = "", *,
             land: bool = False,
-            cost: int = 0,
+            cost: Optional[int] = 0,
             mana_sequence: Optional[Sequence] = None,
             draw_sequence: Optional[Sequence] = None,
             gold_sequence: Optional[Sequence] = None,
@@ -37,13 +37,13 @@ class Card:
 
     def approximate_net_mana_sequence(self) -> Sequence:
         """ (assuming gold is spent immediately)"""
-        return self.mana_sequence + self.gold_sequence + Sequence.once(-self.cost)
+        return self.mana_sequence + self.gold_sequence + Sequence.once(-(self.cost or 0))
 
     def netgain(self) -> int:
         """The immediate return in mana upon playing this card"""
         mana = self.mana_sequence.finite_prefix(1)[0]
         gold = self.gold_sequence.finite_prefix(1)[0]
-        return mana + gold - self.cost
+        return mana + gold - (self.cost or 0)
 
     def is_ramp(self) -> bool:
         """Whether this card produces mana at some point"""
@@ -52,6 +52,11 @@ class Card:
     def is_draw(self) -> bool:
         """Whether this card draws cards at some point"""
         return self.draw_sequence != Sequence.zero
+
+    def is_playable(self, context: "Context") -> bool:
+        """Whether this card is playable given a context"""
+        return (self.cost is not None and self.cost <= context.mana + context.gold) or\
+               (self.land and context.land > 0)
 
     @staticmethod
     def untapped_rock(cost: int, mana: int) -> "Card":
@@ -68,7 +73,7 @@ class Card:
         """Card with given cost that immediately draws given amount of cards"""
         return Card(cost=cost, draw_sequence=Sequence.once(cards))
 
-Card.untapped_land = Card("Untapped land", land=True, mana_sequence=Sequence.one)
-Card.tapped_land   = Card("Tapped land", land=True, mana_sequence=Sequence.one.prefixed_by([0]))
+Card.untapped_land = Card("Untapped land", cost=None, land=True, mana_sequence=Sequence.one)
+Card.tapped_land   = Card("Tapped land", cost=None, land=True, mana_sequence=Sequence.one.prefixed_by([0]))
 Card.cantrip       = Card.draw_spell(1, 1)
 Card.filler        = Card("Filler", cost=20000)

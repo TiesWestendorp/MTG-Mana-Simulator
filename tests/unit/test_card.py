@@ -93,7 +93,7 @@ def test_static_instances():
     """
     assert Card.untapped_land.name == "Untapped land"
     assert Card.untapped_land.land is True
-    assert Card.untapped_land.cost == 0
+    assert Card.untapped_land.cost is None
     assert Card.untapped_land.lands_removed == 0
     assert Card.untapped_land.mana_sequence == Sequence.one
     assert Card.untapped_land.gold_sequence == Sequence.zero
@@ -101,7 +101,7 @@ def test_static_instances():
 
     assert Card.tapped_land.name == "Tapped land"
     assert Card.tapped_land.land is True
-    assert Card.tapped_land.cost == 0
+    assert Card.tapped_land.cost is None
     assert Card.tapped_land.lands_removed == 0
     assert Card.tapped_land.mana_sequence == Sequence([0], [1])
     assert Card.tapped_land.gold_sequence == Sequence.zero
