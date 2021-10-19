@@ -3,14 +3,20 @@ Defines the AI class which is the decision agent that decides whether to mulliga
 or not, and which cards should be played given a certain 'context'.
 """
 
-from typing import Callable, Iterator, List, Optional
+from typing import Callable, Iterator, List, Optional, Tuple
 from random import choice, shuffle
 from mtg_mana_simulator.card import Card
 from mtg_mana_simulator.context import Context
 from mtg_mana_simulator.sequence import Sequence
 
-Mulligan = Callable[[Context, int], Optional[List[int]]]
-Choose   = Callable[[Context],      Optional[int]]
+MayChoose   = Callable[[Context],      Optional[int]]
+MustChoose  = Callable[[Context],      int]
+
+MayChooseN  = Callable[[Context, int], Optional[List[int]]]
+MustChooseN = Callable[[Context, int], List[int]]
+
+MustSplitN  = Callable[[Context, int], Tuple[List[int], List[int]]]
+
 
 class AI:
     """
@@ -20,13 +26,14 @@ class AI:
     dud : "AI"
     naive : "AI"
     less_naive : "AI"
-    never_mulligan  : Mulligan = lambda _,__: list(range(7))
-    never_choose    : Choose   = lambda _: None
-    randomly_choose : Choose   = lambda context: choice(context.playable_cards())
+    never_mulligan  : MayChooseN = lambda _,__: list(range(7))
+    never_choose    : MayChoose  = lambda _: None
+    randomly_choose : MayChoose  = lambda context: choice(context.playable_cards())
+
 
     def __init__(self, *,
-            mulligan: Optional[Mulligan] = None,
-            choose: Optional[Choose] = None) -> None:
+            mulligan: Optional[MayChooseN] = None,
+            choose: Optional[MayChoose] = None) -> None:
         self.mulligan = mulligan if mulligan is not None else AI.never_mulligan
         self.choose   = choose   if choose   is not None else AI.never_choose
 
@@ -107,7 +114,7 @@ class AI:
         return mana_per_turn
 
     @staticmethod
-    def minimum_land_mulligan(min_cards: int, min_lands: int) -> Mulligan:
+    def minimum_land_mulligan(min_cards: int, min_lands: int) -> MayChooseN:
         """
         Mulligan to at most some number of cards, whenever having less than some number of lands
         """
