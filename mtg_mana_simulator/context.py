@@ -62,6 +62,15 @@ class Context:
             for _ in range(number):
                 self.zones["hand"].append(self.zones["deck"].pop())
 
+    def discard_cards(self, indices: List[int]) -> None:
+        """Discard specified cards"""
+        if len(indices) != len(set(indices)) or\
+           any(index >= len(self.zones["hand"]) for index in indices):
+            raise ValueError
+        indices.sort(reverse=True)
+        for index in indices:
+            self.zones["hand"].pop(index)
+
     def play_card(self, card: Card) -> Dict[str, Iterator[int]]:
         """Update the context by playing a given card"""
         self.cached_playable_cards = None

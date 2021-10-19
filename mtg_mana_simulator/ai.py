@@ -11,12 +11,9 @@ from mtg_mana_simulator.sequence import Sequence
 
 MayChoose   = Callable[[Context],      Optional[int]]
 MustChoose  = Callable[[Context],      int]
-
 MayChooseN  = Callable[[Context, int], Optional[List[int]]]
 MustChooseN = Callable[[Context, int], List[int]]
-
 MustSplitN  = Callable[[Context, int], Tuple[List[int], List[int]]]
-
 
 class AI:
     """
@@ -26,16 +23,21 @@ class AI:
     dud : "AI"
     naive : "AI"
     less_naive : "AI"
-    never_mulligan  : MayChooseN = lambda _,__: list(range(7))
-    never_choose    : MayChoose  = lambda _: None
-    randomly_choose : MayChoose  = lambda context: choice(context.playable_cards())
 
+    # Default choice strategies
+    default_mulligan : MayChooseN  = lambda _,number: list(range(number))
+    default_choose   : MayChoose   = lambda _: None
+    default_discard  : MustChooseN = lambda _,number: list(range(number))
+
+    randomly_choose : MayChoose = lambda context: choice(context.playable_cards())
 
     def __init__(self, *,
             mulligan: Optional[MayChooseN] = None,
-            choose: Optional[MayChoose] = None) -> None:
-        self.mulligan = mulligan if mulligan is not None else AI.never_mulligan
-        self.choose   = choose   if choose   is not None else AI.never_choose
+            choose:   Optional[MayChoose]  = None,
+            discard:  Optional[MustChooseN] = None) -> None:
+        self.mulligan = mulligan if mulligan is not None else AI.default_mulligan
+        self.choose   = choose   if choose   is not None else AI.default_choose
+        self.discard  = discard  if discard  is not None else AI.default_discard
 
     def execute_mulligan(self, deck: List[Card]) -> Context:
         """
@@ -111,6 +113,14 @@ class AI:
                 # Maximum attainable mana may have changed after drawing cards
                 max_attainable_mana = max(mana_per_turn[turn], context.max_attainable_mana())
                 mana_per_turn[turn:] = [max_attainable_mana]*(turns-turn)
+
+            # Discard to maximum hand size
+            to_discard = max(0, len(context.zones["hand"])-7)
+            cards = self.discard(context, to_discard)
+            if len(cards) != to_discard:
+                raise ValueError
+            context.discard_cards(cards)
+
         return mana_per_turn
 
     @staticmethod
