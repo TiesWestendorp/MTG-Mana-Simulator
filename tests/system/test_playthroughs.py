@@ -12,10 +12,9 @@ def test_playthrough1():
     """
     Test whether it's possible to play multiple lands due to Azusa, Lost but Seeking
     """
-    azusa = Card(land_sequence=Sequence.repeat(2))
-    hand = [ azusa, *[Card.untapped_land]*4 ]
-    context = Context(hand=hand)
-    context.mana_sequence = Sequence.repeat(3)
+    azusa = Card(cost=3, land_sequence=Sequence.repeat(2))
+    context = Context(hand=[ azusa, *[Card.untapped_land]*4 ])
+    context.mana_sequence = Sequence.once(3)
 
     context.new_turn()
     context.play_card(0) # Play Azusa
@@ -25,3 +24,20 @@ def test_playthrough1():
     assert not context.zones["hand"][0].is_playable(context)
     with raises(ValueError):
         context.play_card(0) # Can't play fourth land
+
+def test_playthrough2():
+    """
+    Test whether Phyrexian Arena actually gives multiple cards per turn
+    """
+    phyrexian_arena = Card(cost=3, draw_sequence=Sequence.one.prefixed_by([0]))
+    context = Context(hand=[ phyrexian_arena ], deck=[Card.filler]*5)
+    context.mana_sequence = Sequence.once(3)
+
+    context.new_turn()
+    context.play_card(0) # Play Phyrexian Arena
+
+    assert len(context.zones["hand"]) == 1
+    context.new_turn()
+    assert len(context.zones["hand"]) == 3
+    context.new_turn()
+    assert len(context.zones["hand"]) == 5
