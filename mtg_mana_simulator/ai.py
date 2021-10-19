@@ -81,7 +81,7 @@ class AI:
         mana_per_turn = turns*[0]
         for turn in range(turns):
             # Draw as much cards as you're supposed to this turn
-            context.turn  = turn+1
+            context.new_turn()
             context.draw_cards(sum(generator.__next__() for generator in draw_generators))
             context.mana  = sum(generator.__next__() for generator in mana_generators)
             context.gold += sum(generator.__next__() for generator in gold_generators)

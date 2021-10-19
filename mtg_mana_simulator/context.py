@@ -54,6 +54,9 @@ class Context:
             for index in indices:
                 self.zones["deck"].pop(index)
 
+    def new_turn(self) -> None:
+        self.turn += 1
+
     def draw_cards(self, number: int) -> None:
         """Draw a number of cards"""
         if number > 0:

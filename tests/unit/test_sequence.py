@@ -83,6 +83,16 @@ def test_generator():
     assert generator.__next__() == 2
     assert generator.__next__() == 3
 
+def test_take():
+    """
+    Test take instance method
+    """
+    assert Sequence([0, 1], [2, 3, 4]).take(1) == Sequence([1], [2, 3, 4])
+    assert Sequence([0, 1], [2, 3, 4]).take(2) == Sequence([], [2, 3, 4])
+    assert Sequence([0, 1], [2, 3, 4]).take(3) == Sequence([], [3, 4, 2])
+    assert Sequence([0, 1], [2, 3, 4]).take(4) == Sequence([], [4, 2, 3])
+    assert Sequence([0, 1], [2, 3, 4]).take(5) == Sequence([], [2, 3, 4])
+
 def test_once():
     """
     Test once static method

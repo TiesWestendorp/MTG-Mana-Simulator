@@ -43,9 +43,15 @@ class Sequence:
     def __add__(self, other: 'Sequence') -> 'Sequence':
         return self.compose(sum, other)
 
+    def __sub__(self, other: 'Sequence') -> 'Sequence':
+        return self.compose(lambda x: x[0]-x[1], other)
+
+    def improvement_over(self, other: 'Sequence') -> 'Sequence':
+        return self.compose(max, other) - other
+
     def compose(self, func: Callable[[Tuple[int, int]], int], other: 'Sequence') -> 'Sequence':
         """Perform elementwise operation on two sequences to create a new one"""
-        prefix_length = max([len(self.prefix), len(other.prefix)])
+        prefix_length = max(len(self.prefix), len(other.prefix))
         pattern_length = lcm(len(self.pattern), len(other.pattern))
         prefix1 = self.finite_prefix(prefix_length + pattern_length)
         prefix2 = other.finite_prefix(prefix_length + pattern_length)
@@ -70,6 +76,13 @@ class Sequence:
         while True:
             for element in self.pattern:
                 yield element
+
+    def take(self, number: int) -> 'Sequence':
+        """Returns a new sequence, where the first number of elements have been removed"""
+        if number <= len(self.prefix):
+            return Sequence(self.prefix[number:], self.pattern)
+        number = (number - len(self.prefix)) % len(self.pattern)
+        return Sequence([], self.pattern[number:] + self.pattern[:number])
 
     @staticmethod
     def once(number: int) -> 'Sequence':
