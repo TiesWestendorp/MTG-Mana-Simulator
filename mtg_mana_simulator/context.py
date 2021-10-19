@@ -3,7 +3,7 @@ Defines the Context class which is used to manage the state. AI decisions are ba
 solely on a given context, and playing a card modifies a context.
 """
 
-from typing import Dict, Iterator, List, Optional
+from typing import Dict, List, Optional
 from random import sample
 from mtg_mana_simulator.card import Card
 from mtg_mana_simulator.sequence import Sequence

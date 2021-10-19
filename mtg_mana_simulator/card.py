@@ -7,8 +7,10 @@ has a mana cost and can be a land or nonland. Finally, it may cause the removal 
 a number of lands from the remaining deck.
 """
 
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from mtg_mana_simulator.sequence import Sequence
+if TYPE_CHECKING:
+    from mtg_mana_simulator.context import Context
 
 class Card:
     """Simplified model of a Magic card"""

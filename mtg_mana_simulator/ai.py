@@ -3,11 +3,10 @@ Defines the AI class which is the decision agent that decides whether to mulliga
 or not, and which cards should be played given a certain 'context'.
 """
 
-from typing import Callable, Iterator, List, Optional, Tuple
+from typing import Callable, List, Optional, Tuple
 from random import choice, shuffle
 from mtg_mana_simulator.card import Card
 from mtg_mana_simulator.context import Context
-from mtg_mana_simulator.sequence import Sequence
 
 MayChoose   = Callable[[Context],      Optional[int]]
 MustChoose  = Callable[[Context],      int]
@@ -96,10 +95,9 @@ class AI:
                     # Pass the turn if the AI decides to stop playing
                     break
 
-                # Play chosen card
+                # Play the chosen card, and redetermine maximum attainable mana, since
+                # it may have changed after drawing cards.
                 context.play_card(chosen)
-
-                # Maximum attainable mana may have changed after drawing cards
                 max_attainable_mana = max(mana_per_turn[turn], context.max_attainable_mana())
                 mana_per_turn[turn:] = [max_attainable_mana]*(turns-turn)
 

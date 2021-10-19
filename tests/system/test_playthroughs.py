@@ -9,6 +9,9 @@ from mtg_mana_simulator.context import Context
 from mtg_mana_simulator.sequence import Sequence
 
 def test_playthrough1():
+    """
+    Test whether it's possible to play multiple lands due to Azusa, Lost but Seeking
+    """
     azusa = Card(land_sequence=Sequence.repeat(2))
     hand = [ azusa, *[Card.untapped_land]*4 ]
     context = Context(hand=hand)

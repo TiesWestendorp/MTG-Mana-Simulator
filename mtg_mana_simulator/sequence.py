@@ -4,7 +4,7 @@ iterate a finite list followed by a repeating pattern, as well as logic to compo
 them.
 """
 
-from typing import Callable, List, Iterator, Tuple
+from typing import Callable, List, Tuple
 from math import ceil
 from mtg_mana_simulator.helpers import divisors, lcm
 
