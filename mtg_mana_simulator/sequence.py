@@ -4,7 +4,7 @@ iterate a finite list followed by a repeating pattern, as well as logic to compo
 them.
 """
 
-from typing import List, Iterator
+from typing import Callable, List, Iterator, Tuple
 from math import ceil
 from mtg_mana_simulator.helpers import divisors, lcm
 
@@ -41,12 +41,16 @@ class Sequence:
         return self.prefix == other.prefix and self.pattern == other.pattern
 
     def __add__(self, other: 'Sequence') -> 'Sequence':
+        return self.compose(sum, other)
+
+    def compose(self, func: Callable[[Tuple[int, int]], int], other: 'Sequence') -> 'Sequence':
+        """Perform elementwise operation on two sequences to create a new one"""
         prefix_length = max([len(self.prefix), len(other.prefix)])
         pattern_length = lcm(len(self.pattern), len(other.pattern))
         prefix1 = self.finite_prefix(prefix_length + pattern_length)
         prefix2 = other.finite_prefix(prefix_length + pattern_length)
-        summed: List[int] = list(map(sum, zip(prefix1, prefix2)))
-        return Sequence(summed[:prefix_length], summed[prefix_length:]).normalize()
+        composed: List[int] = list(map(func, zip(prefix1, prefix2)))
+        return Sequence(composed[:prefix_length], composed[prefix_length:]).normalize()
 
     def prefixed_by(self, additional_prefix: List[int]) -> 'Sequence':
         """Prefix an additional number to the sequence"""
