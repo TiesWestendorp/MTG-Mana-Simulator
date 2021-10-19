@@ -40,6 +40,11 @@ class Sequence:
             return NotImplemented
         return self.prefix == other.prefix and self.pattern == other.pattern
 
+    def __getitem__(self, key: int) -> int:
+        if key < len(self.prefix):
+            return self.prefix[key]
+        return self.pattern[(key - len(self.prefix)) % len(self.pattern)]
+
     def __add__(self, other: 'Sequence') -> 'Sequence':
         return self.compose(sum, other)
 
@@ -47,6 +52,7 @@ class Sequence:
         return self.compose(lambda x: x[0]-x[1], other)
 
     def improvement_over(self, other: 'Sequence') -> 'Sequence':
+        """Returns the improvement this sequence gives over the current one"""
         return self.compose(max, other) - other
 
     def compose(self, func: Callable[[Tuple[int, int]], int], other: 'Sequence') -> 'Sequence':

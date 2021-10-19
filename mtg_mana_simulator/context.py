@@ -55,6 +55,7 @@ class Context:
                 self.zones["deck"].pop(index)
 
     def new_turn(self) -> None:
+        """Does all bookkeeping involved with starting the next turn"""
         self.turn += 1
 
     def draw_cards(self, number: int) -> None:
@@ -88,9 +89,10 @@ class Context:
             'land': card.land_sequence.generator()
         }
         self.remove_lands(card.lands_removed)
+        cost = card.cost or 0
         self.land += generators['land'].__next__() - card.land
-        self.gold += generators['gold'].__next__() - min([self.gold, max([0, (card.cost or 0)-self.mana])])
-        self.mana += generators['mana'].__next__() - min([self.mana, (card.cost or 0)])
+        self.gold += generators['gold'].__next__() - min([self.gold, max([0, cost-self.mana])])
+        self.mana += generators['mana'].__next__() - min([self.mana, cost])
         self.draw_cards(generators['draw'].__next__())
         return generators
 
@@ -110,7 +112,7 @@ class Context:
             for card in sorted(self.nonlands_in_hand(), key=lambda card: (card.cost or 0)):
                 if card.cost is not None:
                     max_attainable_mana += max(0, card.netgain())
-                    # Cards are traversed in cost order, so we can stop early if we can't pay the cost
+                    # Cards are traversed in cost order, so we stop early if we can't pay the cost
                     if card.cost > max_attainable_mana:
                         break
             self.cached_max_attainable_mana = max_attainable_mana

@@ -74,6 +74,7 @@ class Card:
         return Card(cost=cost, draw_sequence=Sequence.once(cards))
 
 Card.untapped_land = Card("Untapped land", cost=None, land=True, mana_sequence=Sequence.one)
-Card.tapped_land   = Card("Tapped land", cost=None, land=True, mana_sequence=Sequence.one.prefixed_by([0]))
+Card.tapped_land   = Card("Tapped land",   cost=None, land=True,
+                        mana_sequence=Sequence.one.prefixed_by([0]))
 Card.cantrip       = Card.draw_spell(1, 1)
 Card.filler        = Card("Filler", cost=20000)
