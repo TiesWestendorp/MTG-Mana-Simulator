@@ -54,7 +54,7 @@ class AI:
 
             # Otherwise, shuffle and offer to mulligan again, with one less card
             shuffle(deck)
-        return Context(hand=[], remaining=deck)
+        return Context(hand=[], deck=deck)
 
     def run(self, *,
             deck: List[Card],

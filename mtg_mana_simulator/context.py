@@ -49,10 +49,10 @@ class Context:
     def remove_lands(self, number: int) -> None:
         """Randomly removes a number of lands from the deck"""
         if number > 0:
-            land_indices = sample([k for k,card in enumerate(self.zones["deck"]) if card.land], number)
-            land_indices.sort(reverse=True)
-            for land_index in land_indices:
-                self.zones["deck"].pop(land_index)
+            indices = sample([k for k,card in enumerate(self.zones["deck"]) if card.land], number)
+            indices.sort(reverse=True)
+            for index in indices:
+                self.zones["deck"].pop(index)
 
     def draw_cards(self, number: int) -> None:
         """Draw a number of cards"""
@@ -82,7 +82,8 @@ class Context:
         if self.cached_playable_cards is None:
             mana = self.mana+self.gold
             condition = lambda card: card.cost <= mana and not (card.land and self.land_for_turn)
-            self.cached_playable_cards = [k for k,card in enumerate(self.zones["hand"]) if condition(card)]
+            playable_cards = [k for k,card in enumerate(self.zones["hand"]) if condition(card)]
+            self.cached_playable_cards = playable_cards
         return self.cached_playable_cards
 
     def max_attainable_mana(self) -> int:
