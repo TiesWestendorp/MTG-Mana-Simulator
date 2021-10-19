@@ -38,7 +38,7 @@ class AI:
             hand = deck[:7]
             remaining = deck[7:]
 
-            card_indices = self.mulligan(Context(hand=hand, remaining=remaining), keepable_cards)
+            card_indices = self.mulligan(Context(hand=hand, deck=remaining), keepable_cards)
             if card_indices is not None and\
                len(card_indices)==keepable_cards and\
                len(card_indices)==len(set(card_indices)) and\
@@ -50,7 +50,7 @@ class AI:
                         accepted.append(card)
                     else:
                         rejected.append(card)
-                return Context(hand=accepted, remaining=remaining+rejected)
+                return Context(hand=accepted, deck=remaining+rejected)
 
             # Otherwise, shuffle and offer to mulligan again, with one less card
             shuffle(deck)
@@ -96,7 +96,7 @@ class AI:
                     break
 
                 # Play chosen card
-                generators = context.play_card(context.hand.pop(chosen))
+                generators = context.play_card(context.zones["hand"].pop(chosen))
                 mana_generators.append(generators['mana'])
                 draw_generators.append(generators['draw'])
                 gold_generators.append(generators['gold'])
@@ -113,11 +113,11 @@ class AI:
         """
         def func(context, keepable_cards):
             if keepable_cards <= min_cards or\
-               sum(card.land for card in context.hand) >= min_lands:
+               sum(card.land for card in context.zones["hand"]) >= min_lands:
                 # Keep the land cards of the dealt hand if the number of cards gets too low,
                 # or the desired minimum number of lands is attained.
                 lands, nonlands = [], []
-                for index,card in enumerate(context.hand):
+                for index,card in enumerate(context.zones["hand"]):
                     if card.land:
                         lands.append(index)
                     else:
@@ -131,7 +131,7 @@ def improved_land_choice(context: Context) -> Optional[int]:
     """
     Play untapped land if needed, then ramp, then draw, then randomly choose a playable card
     """
-    hand = context.hand
+    hand = context.zones["hand"]
     mana = context.mana
     gold = context.gold
     playable_cards = context.playable_cards()

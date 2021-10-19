@@ -16,13 +16,23 @@ class Context:
             gold: int = 0,
             land_for_turn: bool = False,
             hand: Optional[List[Card]] = None,
-            remaining: Optional[List[Card]] = None) -> None:
+            deck: Optional[List[Card]] = None,
+            battlefield: Optional[List[Card]] = None,
+            graveyard: Optional[List[Card]] = None,
+            exile: Optional[List[Card]] = None,
+            command: Optional[List[Card]] = None) -> None:
         self.turn = turn
         self.mana = mana
         self.gold = gold
         self.land_for_turn = land_for_turn
-        self.hand: List[Card] = hand if hand is not None else []
-        self.remaining: List[Card] = remaining if remaining is not None else []
+        self.zones: Dict[str, List[Card]] = {
+            "hand":        hand        if hand is not None        else [],
+            "deck":        deck        if deck is not None        else [],
+            "battlefield": battlefield if battlefield is not None else [],
+            "graveyard":   graveyard   if graveyard is not None   else [],
+            "exile":       exile       if exile is not None       else [],
+            "command":     command     if command is not None     else []
+        }
 
         # Caching behaviours
         self.cached_playable_cards: Optional[List[int]] = None
@@ -30,19 +40,19 @@ class Context:
 
     def lands_in_hand(self) -> List[Card]:
         """List of all land cards in hand"""
-        return [card for card in self.hand if card.land]
+        return [card for card in self.zones["hand"] if card.land]
 
     def nonlands_in_hand(self) -> List[Card]:
         """List of all nonland cards in hand"""
-        return [card for card in self.hand if not card.land]
+        return [card for card in self.zones["hand"] if not card.land]
 
     def remove_lands(self, number: int) -> None:
         """Randomly removes a number of lands from the deck"""
         if number > 0:
-            land_indices = sample([k for k,card in enumerate(self.remaining) if card.land], number)
+            land_indices = sample([k for k,card in enumerate(self.zones["deck"]) if card.land], number)
             land_indices.sort(reverse=True)
             for land_index in land_indices:
-                self.remaining.pop(land_index)
+                self.zones["deck"].pop(land_index)
 
     def draw_cards(self, number: int) -> None:
         """Draw a number of cards"""
@@ -50,7 +60,7 @@ class Context:
             self.cached_max_attainable_mana = None
             self.cached_playable_cards = None
             for _ in range(number):
-                self.hand.append(self.remaining.pop())
+                self.zones["hand"].append(self.zones["deck"].pop())
 
     def play_card(self, card: Card) -> Dict[str, Iterator[int]]:
         """Update the context by playing a given card"""
@@ -72,7 +82,7 @@ class Context:
         if self.cached_playable_cards is None:
             mana = self.mana+self.gold
             condition = lambda card: card.cost <= mana and not (card.land and self.land_for_turn)
-            self.cached_playable_cards = [k for k,card in enumerate(self.hand) if condition(card)]
+            self.cached_playable_cards = [k for k,card in enumerate(self.zones["hand"]) if condition(card)]
         return self.cached_playable_cards
 
     def max_attainable_mana(self) -> int:
