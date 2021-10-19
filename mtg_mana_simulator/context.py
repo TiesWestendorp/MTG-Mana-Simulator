@@ -14,7 +14,7 @@ class Context:
             turn: int = 0,
             mana: int = 0,
             gold: int = 0,
-            land_for_turn: bool = False,
+            land: int = 1,
             hand: Optional[List[Card]] = None,
             deck: Optional[List[Card]] = None,
             battlefield: Optional[List[Card]] = None,
@@ -24,7 +24,7 @@ class Context:
         self.turn = turn
         self.mana = mana
         self.gold = gold
-        self.land_for_turn = land_for_turn
+        self.land = land
         self.zones: Dict[str, List[Card]] = {
             "hand":        hand        if hand is not None        else [],
             "deck":        deck        if deck is not None        else [],
@@ -77,10 +77,11 @@ class Context:
         generators = {
             'mana': card.mana_sequence.generator(),
             'draw': card.draw_sequence.generator(),
-            'gold': card.gold_sequence.generator()
+            'gold': card.gold_sequence.generator(),
+            'land': card.land_sequence.generator()
         }
         self.remove_lands(card.lands_removed)
-        self.land_for_turn = self.land_for_turn or card.land
+        self.land += generators['land'].__next__() - card.land
         self.gold += generators['gold'].__next__() - min([self.gold, max([0, card.cost-self.mana])])
         self.mana += generators['mana'].__next__() - min([self.mana, card.cost])
         self.draw_cards(generators['draw'].__next__())
@@ -90,7 +91,7 @@ class Context:
         """Returns a list of indices of the cards that can currently be played"""
         if self.cached_playable_cards is None:
             mana = self.mana+self.gold
-            condition = lambda card: card.cost <= mana and not (card.land and self.land_for_turn)
+            condition = lambda card: card.cost <= mana and not (card.land and self.land <= 0)
             playable_cards = [k for k,card in enumerate(self.zones["hand"]) if condition(card)]
             self.cached_playable_cards = playable_cards
         return self.cached_playable_cards
@@ -99,7 +100,7 @@ class Context:
         """Maximum attainable mana based on public information (lands and net gain)"""
         if self.cached_max_attainable_mana is None:
             max_attainable_mana = self.mana + self.gold
-            if not self.land_for_turn:
+            if self.land > 0:
                 max_attainable_mana += max([0]+[card.netgain() for card in self.lands_in_hand()])
             for card in sorted(self.nonlands_in_hand(), key=lambda card: card.cost):
                 max_attainable_mana += max(0, card.netgain())

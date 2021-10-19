@@ -76,6 +76,7 @@ class AI:
         mana_generators: List[Iterator[int]] = []
         draw_generators: List[Iterator[int]] = [Sequence.one.generator()]
         gold_generators: List[Iterator[int]] = []
+        land_generators: List[Iterator[int]] = [Sequence.one.generator()]
 
         mana_per_turn = turns*[0]
         for turn in range(turns):
@@ -84,7 +85,7 @@ class AI:
             context.draw_cards(sum(generator.__next__() for generator in draw_generators))
             context.mana  = sum(generator.__next__() for generator in mana_generators)
             context.gold += sum(generator.__next__() for generator in gold_generators)
-            context.land_for_turn = False
+            context.land  = sum(generator.__next__() for generator in land_generators)
 
             # Determine maximum attainable mana before cards have been played, and set
             # the value of all following turns to that value. I.e. the player could
@@ -109,6 +110,7 @@ class AI:
                 mana_generators.append(generators['mana'])
                 draw_generators.append(generators['draw'])
                 gold_generators.append(generators['gold'])
+                land_generators.append(generators['land'])
 
                 # Maximum attainable mana may have changed after drawing cards
                 max_attainable_mana = max(mana_per_turn[turn], context.max_attainable_mana())
