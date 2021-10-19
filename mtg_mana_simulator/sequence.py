@@ -75,13 +75,14 @@ class Sequence:
         times = ceil((length - len(self.prefix))/len(self.pattern))
         return (self.prefix + times*self.pattern)[:length]
 
-    def generator(self) -> Iterator[int]:
-        """Returns a generator that iterates the sequence"""
-        for element in self.prefix:
-            yield element
-        while True:
-            for element in self.pattern:
-                yield element
+# DEPRECATED
+#    def generator(self) -> Iterator[int]:
+#        """Returns a generator that iterates the sequence"""
+#        for element in self.prefix:
+#            yield element
+#        while True:
+#            for element in self.pattern:
+#                yield element
 
     def take(self, number: int) -> 'Sequence':
         """Returns a new sequence, where the first number of elements have been removed"""

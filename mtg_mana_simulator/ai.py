@@ -73,19 +73,24 @@ class AI:
         """
 
         context = self.execute_mulligan(deck[:])
-        mana_generators: List[Iterator[int]] = []
-        draw_generators: List[Iterator[int]] = [Sequence.one.generator()]
-        gold_generators: List[Iterator[int]] = []
-        land_generators: List[Iterator[int]] = [Sequence.one.generator()]
+        mana_sequence: Sequence = Sequence.zero
+        draw_sequence: Sequence = Sequence.one
+        gold_sequence: Sequence = Sequence.zero
+        land_sequence: Sequence = Sequence.one
 
         mana_per_turn = turns*[0]
         for turn in range(turns):
             # Draw as much cards as you're supposed to this turn
             context.new_turn()
-            context.draw_cards(sum(generator.__next__() for generator in draw_generators))
-            context.mana  = sum(generator.__next__() for generator in mana_generators)
-            context.gold += sum(generator.__next__() for generator in gold_generators)
-            context.land  = sum(generator.__next__() for generator in land_generators)
+            context.draw_cards(draw_sequence[0])
+            context.mana  = mana_sequence[0]
+            context.gold += gold_sequence[0]
+            context.land  = land_sequence[0]
+
+            draw_sequence = draw_sequence.take(1)
+            mana_sequence = mana_sequence.take(1)
+            gold_sequence = gold_sequence.take(1)
+            land_sequence = land_sequence.take(1)
 
             # Determine maximum attainable mana before cards have been played, and set
             # the value of all following turns to that value. I.e. the player could
@@ -106,11 +111,11 @@ class AI:
                     break
 
                 # Play chosen card
-                generators = context.play_card(chosen)
-                mana_generators.append(generators['mana'])
-                draw_generators.append(generators['draw'])
-                gold_generators.append(generators['gold'])
-                land_generators.append(generators['land'])
+                sequences = context.play_card(chosen)
+                draw_sequence += sequences['draw']
+                mana_sequence += sequences['mana']
+                gold_sequence += sequences['gold']
+                land_sequence += sequences['land']
 
                 # Maximum attainable mana may have changed after drawing cards
                 max_attainable_mana = max(mana_per_turn[turn], context.max_attainable_mana())

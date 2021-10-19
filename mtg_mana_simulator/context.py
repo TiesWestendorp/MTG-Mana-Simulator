@@ -82,19 +82,19 @@ class Context:
 
         self.cached_playable_cards = None
         card = self.zones["hand"].pop(index)
-        generators = {
-            'mana': card.mana_sequence.generator(),
-            'draw': card.draw_sequence.generator(),
-            'gold': card.gold_sequence.generator(),
-            'land': card.land_sequence.generator()
+        sequences = {
+            'mana': card.mana_sequence.take(1),
+            'draw': card.draw_sequence.take(1),
+            'gold': card.gold_sequence.take(1),
+            'land': card.land_sequence.take(1)
         }
         self.remove_lands(card.lands_removed)
         cost = card.cost or 0
-        self.land += generators['land'].__next__() - card.land
-        self.gold += generators['gold'].__next__() - min([self.gold, max([0, cost-self.mana])])
-        self.mana += generators['mana'].__next__() - min([self.mana, cost])
-        self.draw_cards(generators['draw'].__next__())
-        return generators
+        self.land += card.land_sequence[0] - card.land
+        self.gold += card.gold_sequence[0] - min([self.gold, max([0, cost-self.mana])])
+        self.mana += card.mana_sequence[0] - min([self.mana, cost])
+        self.draw_cards(card.draw_sequence[0])
+        return sequences
 
     def playable_cards(self) -> List[int]:
         """Returns a list of indices of the cards that can currently be played"""
