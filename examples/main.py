@@ -3,7 +3,7 @@ Plots several metrics of templates.
 """
 
 import matplotlib.pyplot as plt
-from .models import AI, Card, Experiment, Metric, Sequence
+from mtg_mana_simulator import AI, Card, Experiment, Metric, Sequence
 
 AI = AI.naive
 TURNS = 10
