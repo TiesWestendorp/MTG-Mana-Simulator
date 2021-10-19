@@ -11,7 +11,10 @@ from mtg_mana_simulator.sequence import Sequence
 def test_playthrough1():
     azusa = Card(land_sequence=Sequence.repeat(2))
     hand = [ azusa, *[Card.untapped_land]*4 ]
-    context = Context(hand=hand, mana=3)
+    context = Context(hand=hand)
+    context.mana_sequence = Sequence.repeat(3)
+
+    context.new_turn()
     context.play_card(0) # Play Azusa
     for _ in range(3):
         assert context.zones["hand"][0].is_playable(context)

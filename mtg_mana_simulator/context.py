@@ -6,6 +6,7 @@ solely on a given context, and playing a card modifies a context.
 from typing import Dict, Iterator, List, Optional
 from random import sample
 from mtg_mana_simulator.card import Card
+from mtg_mana_simulator.sequence import Sequence
 
 class Context:
     """Snapshot of the state at a particular point in time"""
@@ -14,7 +15,7 @@ class Context:
             turn: int = 0,
             mana: int = 0,
             gold: int = 0,
-            land: int = 1,
+            land: int = 0,
             hand: Optional[List[Card]] = None,
             deck: Optional[List[Card]] = None,
             battlefield: Optional[List[Card]] = None,
@@ -33,6 +34,12 @@ class Context:
             "exile":       exile       if exile is not None       else [],
             "command":     command     if command is not None     else []
         }
+
+        # Starting sequences
+        self.mana_sequence = Sequence.zero
+        self.draw_sequence = Sequence.one
+        self.gold_sequence = Sequence.zero
+        self.land_sequence = Sequence.one
 
         # Caching behaviours
         self.cached_playable_cards: Optional[List[int]] = None
@@ -57,9 +64,18 @@ class Context:
     def new_turn(self) -> None:
         """Does all bookkeeping involved with starting the next turn"""
         self.turn += 1
+        self.draw_cards(self.draw_sequence[0])
+        self.mana  = self.mana_sequence[0]
+        self.gold += self.gold_sequence[0]
+        self.land  = self.land_sequence[0]
+        self.draw_sequence = self.draw_sequence.take(1)
+        self.mana_sequence = self.mana_sequence.take(1)
+        self.gold_sequence = self.gold_sequence.take(1)
+        self.land_sequence = self.land_sequence.take(1)
 
     def draw_cards(self, number: int) -> None:
         """Draw a number of cards"""
+        number = min(number, len(self.zones["deck"]))
         if number > 0:
             self.cached_max_attainable_mana = None
             self.cached_playable_cards = None
@@ -75,26 +91,25 @@ class Context:
         for index in indices:
             self.zones["hand"].pop(index)
 
-    def play_card(self, index: int) -> Dict[str, Iterator[int]]:
+    def play_card(self, index: int) -> None:
         """Update the context by playing a given card"""
         if index not in self.playable_cards():
             raise ValueError
 
         self.cached_playable_cards = None
         card = self.zones["hand"].pop(index)
-        sequences = {
-            'mana': card.mana_sequence.take(1),
-            'draw': card.draw_sequence.take(1),
-            'gold': card.gold_sequence.take(1),
-            'land': card.land_sequence.take(1)
-        }
+
         self.remove_lands(card.lands_removed)
         cost = card.cost or 0
         self.land += card.land_sequence[0] - card.land
         self.gold += card.gold_sequence[0] - min([self.gold, max([0, cost-self.mana])])
         self.mana += card.mana_sequence[0] - min([self.mana, cost])
         self.draw_cards(card.draw_sequence[0])
-        return sequences
+
+        self.mana_sequence += card.mana_sequence.take(1)
+        self.draw_sequence += card.draw_sequence.take(1)
+        self.gold_sequence += card.gold_sequence.take(1)
+        self.land_sequence += card.land_sequence.take(1)
 
     def playable_cards(self) -> List[int]:
         """Returns a list of indices of the cards that can currently be played"""

@@ -72,17 +72,6 @@ def test_finite_prefix():
     assert [1, 2, 3, 4, 4] == Sequence([1, 2, 3], [4]).finite_prefix(5)
     assert [0, 1, 1, 1, 1] == Sequence([0], [1]).finite_prefix(5)
 
-def test_generator():
-    """
-    Test generator instance method
-    """
-    generator = Sequence([1], [2, 3]).generator()
-    assert generator.__next__() == 1
-    assert generator.__next__() == 2
-    assert generator.__next__() == 3
-    assert generator.__next__() == 2
-    assert generator.__next__() == 3
-
 def test_take():
     """
     Test take instance method
