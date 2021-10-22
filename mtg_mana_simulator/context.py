@@ -49,13 +49,13 @@ class Context:
         self.cached_playable_cards: Optional[List[int]] = None
         self.cached_max_attainable_mana: Optional[int] = None
 
-    def lands_in_hand(self) -> List[Card]:
+    def lands_in_zone(self, zone: str) -> List[Card]:
         """List of all land cards in hand"""
-        return [card for card in self.zones["hand"] if card.land]
+        return [card for card in self.zones[zone] if card.land]
 
-    def nonlands_in_hand(self) -> List[Card]:
+    def nonlands_in_zone(self, zone: str) -> List[Card]:
         """List of all nonland cards in hand"""
-        return [card for card in self.zones["hand"] if not card.land]
+        return [card for card in self.zones[zone] if not card.land]
 
     def remove_lands(self, number: int) -> None:
         """Randomly removes a number of lands from the deck"""
@@ -93,15 +93,15 @@ class Context:
             raise ValueError
         indices.sort(reverse=True)
         for index in indices:
-            self.zones["hand"].pop(index)
+            self.zones["graveyard"].append(self.zones["hand"].pop(index))
 
-    def play_card(self, index: int) -> None:
+    def play_card(self, zone: str, index: int) -> None:
         """Update the context by playing a given card"""
-        if index not in self.playable_cards():
+        if zone not in self.zones.keys() or index not in self.playable_cards():
             raise ValueError
 
         self.cached_playable_cards = None
-        card = self.zones["hand"].pop(index)
+        card = self.zones[zone].pop(index)
 
         self.remove_lands(card.lands_removed)
         cost = card.cost or 0
@@ -126,9 +126,12 @@ class Context:
         """Maximum attainable mana based on public information (lands and net gain)"""
         if self.cached_max_attainable_mana is None:
             max_attainable_mana = self.mana + self.gold
+
+            # Suppose you were to play all the lands you could
             if self.land > 0:
-                max_attainable_mana += max([0]+[card.netgain() for card in self.lands_in_hand()])
-            for card in sorted(self.nonlands_in_hand(), key=lambda card: (card.cost or 0)):
+                land_netgain = [card.netgain() for card in self.lands_in_zone("hand")]
+                max_attainable_mana += sum(sorted(land_netgain, reverse=True)[:self.land])
+            for card in sorted(self.nonlands_in_zone("hand"), key=lambda card: (card.cost or 0)):
                 if card.cost is not None:
                     max_attainable_mana += max(0, card.netgain())
                     # Cards are traversed in cost order, so we stop early if we can't pay the cost
