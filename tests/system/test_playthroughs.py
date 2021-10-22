@@ -35,9 +35,23 @@ def test_playthrough2():
 
     context.new_turn()
     context.play_card("hand", 0) # Play Phyrexian Arena
-
     assert len(context.zones["hand"]) == 1
     context.new_turn()
     assert len(context.zones["hand"]) == 3
     context.new_turn()
     assert len(context.zones["hand"]) == 5
+
+def playthrough3():
+    """
+    Test whether Crucible of Worlds allows playing lands from the graveyard
+    """
+    crucible_of_worlds = Card(cost=3)
+    context = Context(hand=[ crucible_of_worlds ],
+                      deck=[Card.filler]*3,
+                      graveyard=[Card.untapped_land]*3)
+    context.mana_sequence = Sequence.once(3)
+
+    for _ in range(3):
+        context.new_turn()
+        assert context.zones["graveyard"][0].is_playable(context)
+        context.play_card("graveyard", 0) # Play land from the graveyard
