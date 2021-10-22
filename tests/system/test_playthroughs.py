@@ -7,12 +7,13 @@ from pytest import raises
 from mtg_mana_simulator.card import Card
 from mtg_mana_simulator.context import Context
 from mtg_mana_simulator.sequence import Sequence
+from mtg_mana_simulator.repository import Repository
 
 def test_playthrough1():
     """
     Test whether it's possible to play multiple lands due to Azusa, Lost but Seeking
     """
-    azusa = Card(cost=3, land_sequence=Sequence.repeat(2))
+    azusa = Repository['Azusa, Lost but Seeking']
     context = Context(hand=[ azusa, *[Card.untapped_land]*4 ])
     context.mana_sequence = Sequence.once(3)
 
@@ -29,7 +30,7 @@ def test_playthrough2():
     """
     Test whether Phyrexian Arena actually gives multiple cards per turn
     """
-    phyrexian_arena = Card(cost=3, draw_sequence=Sequence.one.prefixed_by([0]))
+    phyrexian_arena = Repository['Phyrexian Arena']
     context = Context(hand=[ phyrexian_arena ], deck=[Card.filler]*5)
     context.mana_sequence = Sequence.once(3)
 
@@ -45,7 +46,7 @@ def playthrough3():
     """
     Test whether Crucible of Worlds allows playing lands from the graveyard
     """
-    crucible_of_worlds = Card(cost=3)
+    crucible_of_worlds = Repository['Crucible of Worlds']
     context = Context(hand=[ crucible_of_worlds ],
                       deck=[Card.filler]*3,
                       graveyard=[Card.untapped_land]*3)

@@ -62,7 +62,7 @@ def test_sanity_check_3():
 
 def test_sanity_check_4():
     """
-    Sanity check #3: replacing filler by card draw improves probability of
+    Sanity check #4: replacing filler by card draw improves probability of
     being on-curve.
     """
     seed(1337)
@@ -80,7 +80,7 @@ def test_sanity_check_4():
 
 def test_sanity_check_5():
     """
-    Sanity check #4: removing lands from deck decreases chances of being on curve.
+    Sanity check #5: removing lands from deck decreases chances of being on curve.
     """
     seed(1337)
 
@@ -94,3 +94,16 @@ def test_sanity_check_5():
 
     for sample1,sample2 in zip(results1, results2):
         assert sample1 - sample2 >= -0.05
+
+def test_sanity_check_6():
+    """
+    Sanity check #6: playing just filler cards will mean you're never on curve.
+    """
+    seed(1337)
+
+    deck = 99*[Card.filler]
+    experiment1 = Experiment(deck=deck, ai=AI.naive, turns=8, repeats=100)
+    results = list(experiment1.evaluate([Metric.on_curve]).values())[0]
+
+    for sample in results:
+        assert sample == 0.0
