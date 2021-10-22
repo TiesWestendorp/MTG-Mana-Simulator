@@ -17,13 +17,13 @@ def test_playthrough1():
     context.mana_sequence = Sequence.once(3)
 
     context.new_turn()
-    context.play_card(0) # Play Azusa
+    context.play_card("hand", 0) # Play Azusa
     for _ in range(3):
         assert context.zones["hand"][0].is_playable(context)
-        context.play_card(0) # Play nth land
+        context.play_card("hand", 0) # Play nth land
     assert not context.zones["hand"][0].is_playable(context)
     with raises(ValueError):
-        context.play_card(0) # Can't play fourth land
+        context.play_card("hand", 0) # Can't play fourth land
 
 def test_playthrough2():
     """
@@ -34,7 +34,7 @@ def test_playthrough2():
     context.mana_sequence = Sequence.once(3)
 
     context.new_turn()
-    context.play_card(0) # Play Phyrexian Arena
+    context.play_card("hand", 0) # Play Phyrexian Arena
 
     assert len(context.zones["hand"]) == 1
     context.new_turn()
