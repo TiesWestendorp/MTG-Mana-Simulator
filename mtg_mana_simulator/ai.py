@@ -44,35 +44,30 @@ class AI:
         """
         for keepable_cards in reversed(range(1,8)):
             hand = deck[:7]
-            remaining = deck[7:]
+            rest = deck[7:]
 
-            card_indices = self.mulligan(Context(hand=hand, deck=remaining), keepable_cards)
+            card_indices = self.mulligan(Context(hand=hand, deck=rest, ai=self), keepable_cards)
             if card_indices is not None and\
                len(card_indices)==keepable_cards and\
                len(card_indices)==len(set(card_indices)) and\
                all(0 <= index < 7 for index in card_indices):
                 # If AI decided to keep, and the choice was valid, process the accepted cards
-                accepted, rejected = [], []
+                accepted: List[Card] = []
+                rejected: List[Card] = []
                 for index,card in enumerate(hand):
-                    if index in card_indices:
-                        accepted.append(card)
-                    else:
-                        rejected.append(card)
-                return Context(hand=accepted, deck=remaining+rejected)
+                    (accepted if index in card_indices else rejected).append(card)
+                return Context(hand=accepted, deck=rest+rejected, ai=self)
 
             # Otherwise, shuffle and offer to mulligan again, with one less card
             shuffle(deck)
-        return Context(hand=[], deck=deck)
+        return Context(hand=[], deck=deck, ai=self)
 
     def run(self, *,
-            deck: List[Card],
+            context: Context,
             turns: int) -> List[int]:
         """
         Simulate playing given deck for some number of turns and return maximum mana per turn
         """
-
-        context = self.execute_mulligan(deck[:])
-
         mana_per_turn = turns*[0]
         for turn in range(turns):
             context.new_turn()
@@ -122,10 +117,7 @@ class AI:
                 # or the desired minimum number of lands is attained.
                 lands, nonlands = [], []
                 for index,card in enumerate(context.zones["hand"]):
-                    if card.land:
-                        lands.append(index)
-                    else:
-                        nonlands.append(index)
+                    (lands if card.land else nonlands).append(index)
                 return (lands + nonlands)[:keepable_cards]
             # Mulligan
             return None

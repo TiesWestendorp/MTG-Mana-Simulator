@@ -3,15 +3,18 @@ Defines the Context class which is used to manage the state. AI decisions are ba
 solely on a given context, and playing a card modifies a context.
 """
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, TYPE_CHECKING
 from random import sample
 from mtg_mana_simulator.card import Card
 from mtg_mana_simulator.sequence import Sequence
+if TYPE_CHECKING:
+    from mtg_mana_simulator.ai import AI
 
 class Context:
     """Snapshot of the state at a particular point in time"""
 
     def __init__(self, *,
+            ai: Optional["AI"] = None,
             turn: int = 0,
             mana: int = 0,
             gold: int = 0,
@@ -22,6 +25,7 @@ class Context:
             graveyard: Optional[List[Card]] = None,
             exile: Optional[List[Card]] = None,
             command: Optional[List[Card]] = None) -> None:
+        self.ai   = ai
         self.turn = turn
         self.mana = mana
         self.gold = gold

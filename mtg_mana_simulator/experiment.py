@@ -42,7 +42,10 @@ class Experiment:
             else:
                 shuffle(self.deck)
 
-            self.traces[iteration] = self.ai.run(deck=self.deck, turns=self.turns)
+            context = self.ai.execute_mulligan(self.deck[:]) # TODO: deep-copy
+            # TODO: change API, run is method of context, not of AI
+            trace = self.ai.run(context=context, turns=self.turns)
+            self.traces[iteration] = trace
 
     def evaluate(self, metrics: List[Metric]) -> Dict[str, List[Any]]:
         """Evaluate given metrics on the generated traces"""

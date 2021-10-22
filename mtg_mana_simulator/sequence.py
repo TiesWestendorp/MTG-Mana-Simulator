@@ -45,17 +45,17 @@ class Sequence:
             return self.prefix[key]
         return self.pattern[(key - len(self.prefix)) % len(self.pattern)]
 
-    def __add__(self, other: 'Sequence') -> 'Sequence':
+    def __add__(self, other: "Sequence") -> "Sequence":
         return self.compose(sum, other)
 
-    def __sub__(self, other: 'Sequence') -> 'Sequence':
+    def __sub__(self, other: "Sequence") -> "Sequence":
         return self.compose(lambda x: x[0]-x[1], other)
 
-    def improvement_over(self, other: 'Sequence') -> 'Sequence':
+    def improvement_over(self, other: "Sequence") -> "Sequence":
         """Returns the improvement this sequence gives over the current one"""
         return self.compose(max, other) - other
 
-    def compose(self, func: Callable[[Tuple[int, int]], int], other: 'Sequence') -> 'Sequence':
+    def compose(self, func: Callable[[Tuple[int, int]], int], other: "Sequence") -> "Sequence":
         """Perform elementwise operation on two sequences to create a new one"""
         prefix_length = max(len(self.prefix), len(other.prefix))
         pattern_length = lcm(len(self.pattern), len(other.pattern))
@@ -64,7 +64,7 @@ class Sequence:
         composed: List[int] = list(map(func, zip(prefix1, prefix2)))
         return Sequence(composed[:prefix_length], composed[prefix_length:]).normalize()
 
-    def prefixed_by(self, additional_prefix: List[int]) -> 'Sequence':
+    def prefixed_by(self, additional_prefix: List[int]) -> "Sequence":
         """Prefix an additional number to the sequence"""
         return Sequence(additional_prefix + self.prefix, self.pattern).normalize()
 
@@ -75,16 +75,7 @@ class Sequence:
         times = ceil((length - len(self.prefix))/len(self.pattern))
         return (self.prefix + times*self.pattern)[:length]
 
-# DEPRECATED
-#    def generator(self) -> Iterator[int]:
-#        """Returns a generator that iterates the sequence"""
-#        for element in self.prefix:
-#            yield element
-#        while True:
-#            for element in self.pattern:
-#                yield element
-
-    def take(self, number: int) -> 'Sequence':
+    def take(self, number: int) -> "Sequence":
         """Returns a new sequence, where the first number of elements have been removed"""
         if number <= len(self.prefix):
             return Sequence(self.prefix[number:], self.pattern)
@@ -92,12 +83,12 @@ class Sequence:
         return Sequence([], self.pattern[number:] + self.pattern[:number])
 
     @staticmethod
-    def once(number: int) -> 'Sequence':
+    def once(number: int) -> "Sequence":
         """Returns a sequence of all zeroes prefixed by the given number"""
         return Sequence([number], []).normalize()
 
     @staticmethod
-    def repeat(number: int) -> 'Sequence':
+    def repeat(number: int) -> "Sequence":
         """Returns a sequence infinitely repeating the given number"""
         return Sequence([], [number])
 
