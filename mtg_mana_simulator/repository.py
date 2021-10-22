@@ -34,7 +34,7 @@ Repository['Gitaxian Probe'] = Card.draw_spell(0, 1)
 Repository['Illusion of Choice'] = Card.cantrip
 Repository['Peek'] = Card.cantrip
 Repository['Phyrexian Arena'] = Card(cost=3, draw_sequence=Sequence.one.prefixed_by([0]))
-Repository['Reach Through Mists'] = Card.cantrip,
+Repository['Reach Through Mists'] = Card.cantrip
 Repository['Plains'] =          Card.untapped_land
 Repository['Island'] =          Card.untapped_land
 Repository['Swamp'] =           Card.untapped_land
