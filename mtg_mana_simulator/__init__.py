@@ -8,5 +8,6 @@ from mtg_mana_simulator.card import Card
 from mtg_mana_simulator.context import Context
 from mtg_mana_simulator.experiment import Experiment
 from mtg_mana_simulator.metric import Metric
+from mtg_mana_simulator.repository import Repository
 from mtg_mana_simulator.sequence import Sequence
 from mtg_mana_simulator.version import __version__
