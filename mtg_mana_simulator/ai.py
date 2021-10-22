@@ -92,7 +92,7 @@ class AI:
 
                 # Play the chosen card, and redetermine maximum attainable mana, since
                 # it may have changed after drawing cards.
-                context.play_card(chosen)
+                context.play_card("hand", chosen)
                 max_attainable_mana = max(mana_per_turn[turn], context.max_attainable_mana())
                 mana_per_turn[turn:] = [max_attainable_mana]*(turns-turn)
 
