@@ -131,6 +131,8 @@ class Context:
             if self.land > 0:
                 land_netgain = [card.netgain() for card in self.lands_in_zone("hand")]
                 max_attainable_mana += sum(sorted(land_netgain, reverse=True)[:self.land])
+
+            # Suppose you were to play all the nonlands that immediately net mana
             for card in sorted(self.nonlands_in_zone("hand"), key=lambda card: (card.cost or 0)):
                 if card.cost is not None:
                     max_attainable_mana += max(0, card.netgain())
