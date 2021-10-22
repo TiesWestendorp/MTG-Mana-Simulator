@@ -106,8 +106,8 @@ class Context:
         self.remove_lands(card.lands_removed)
         cost = card.cost or 0
         self.land += card.land_sequence[0] - card.land
-        self.gold += card.gold_sequence[0] - min([self.gold, max([0, cost-self.mana])])
-        self.mana += card.mana_sequence[0] - min([self.mana, cost])
+        self.gold += card.gold_sequence[0] - min(self.gold, max(0, cost-self.mana))
+        self.mana += card.mana_sequence[0] - min(self.mana, cost)
         self.draw_cards(card.draw_sequence[0])
 
         self.mana_sequence += card.mana_sequence.take(1)

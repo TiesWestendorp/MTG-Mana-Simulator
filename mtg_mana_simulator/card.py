@@ -39,7 +39,7 @@ class Card:
 
     def approximate_net_mana_sequence(self) -> Sequence:
         """ (assuming gold is spent immediately)"""
-        return self.mana_sequence + self.gold_sequence + Sequence.once(-(self.cost or 0))
+        return self.mana_sequence + self.gold_sequence + Sequence.once(-self.cost or 0)
 
     def netgain(self) -> int:
         """The immediate return in mana upon playing this card"""
