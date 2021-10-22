@@ -115,7 +115,8 @@ class AI:
                sum(card.land for card in context.zones["hand"]) >= min_lands:
                 # Keep the land cards of the dealt hand if the number of cards gets too low,
                 # or the desired minimum number of lands is attained.
-                lands, nonlands = [], []
+                lands: List[Card] = []
+                nonlands: List[Card] = []
                 for index,card in enumerate(context.zones["hand"]):
                     (lands if card.land else nonlands).append(index)
                 return (lands + nonlands)[:keepable_cards]

@@ -42,8 +42,8 @@ class Experiment:
             else:
                 shuffle(self.deck)
 
-            context = self.ai.execute_mulligan(self.deck[:]) # TODO: deep-copy
-            # TODO: change API, run is method of context, not of AI
+            context = self.ai.execute_mulligan(self.deck[:]) # deep-copy
+            # change API, run is method of context, not of AI
             trace = self.ai.run(context=context, turns=self.turns)
             self.traces[iteration] = trace
 
