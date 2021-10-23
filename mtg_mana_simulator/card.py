@@ -43,9 +43,7 @@ class Card:
 
     def netgain(self) -> int:
         """The immediate return in mana upon playing this card"""
-        mana = self.mana_sequence.finite_prefix(1)[0]
-        gold = self.gold_sequence.finite_prefix(1)[0]
-        return mana + gold - (self.cost or 0)
+        return self.mana_sequence[0] + self.gold_sequence[0] - (self.cost or 0)
 
     def is_ramp(self) -> bool:
         """Whether this card produces mana at some point"""
