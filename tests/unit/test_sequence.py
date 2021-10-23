@@ -43,6 +43,17 @@ def test___eq__():
     assert Sequence([], [1]) != Sequence([0], [1])
     assert Sequence([], [1, 0]) != Sequence([], [0, 1])
 
+def test___getitem__():
+    """
+    Test __getitem__ instance method
+    """
+    assert Sequence([0, 1], [2, 3])[0] == 0
+    assert Sequence([0, 1], [2, 3])[1] == 1
+    assert Sequence([0, 1], [2, 3])[2] == 2
+    assert Sequence([0, 1], [2, 3])[3] == 3
+    assert Sequence([0, 1], [2, 3])[4] == 2
+    assert Sequence([0, 1], [2, 3])[5] == 3
+
 def test___add__():
     """
     Test __add__ instance method
@@ -50,6 +61,32 @@ def test___add__():
     assert Sequence([], [1]) + Sequence([], [2]) == Sequence([], [3])
     assert Sequence([1], [2]) + Sequence([], [3]) == Sequence([4], [5])
     assert Sequence([0], [1, 0]) + Sequence([], [1, 0]) == Sequence([], [1])
+
+def test___sub__():
+    """
+    Test __sub__ instance method
+    """
+    assert Sequence([], [1]) - Sequence([], [2]) == Sequence([], [-1])
+    assert Sequence([1], [2]) - Sequence([], [3]) == Sequence([-2], [-1])
+    assert Sequence([0], [1, 0]) - Sequence([], [1, 0]) == Sequence([], [-1, 1])
+
+def test_compose():
+    """
+    Test compose instance method
+    """
+    func = lambda x: memory.append(x) or 0
+
+    memory = []
+    assert Sequence([], [1]).compose(func, Sequence([], [2])) == Sequence.zero
+    assert memory == [(1,2)]
+
+    memory = []
+    assert Sequence([1], [2]).compose(func, Sequence([], [2])) == Sequence.zero
+    assert memory == [(1,2), (2,2)]
+
+    memory = []
+    assert Sequence([], [0, 1]).compose(func, Sequence([], [1, 0])) == Sequence.zero
+    assert memory == [(0,1), (1,0)]
 
 def test_prefixed_by():
     """

@@ -51,10 +51,6 @@ class Sequence:
     def __sub__(self, other: "Sequence") -> "Sequence":
         return self.compose(lambda x: x[0]-x[1], other)
 
-    def improvement_over(self, other: "Sequence") -> "Sequence":
-        """Returns the improvement this sequence gives over the current one"""
-        return self.compose(max, other) - other
-
     def compose(self, func: Callable[[Tuple[int, int]], int], other: "Sequence") -> "Sequence":
         """Perform elementwise operation on two sequences to create a new one"""
         prefix_length = max(len(self.prefix), len(other.prefix))
