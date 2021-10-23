@@ -39,7 +39,7 @@ for _,deck in decks:
 with plt.style.context("bmh"):
     plt.figure(figsize=(8,4), dpi=80)
     for title,deck in decks:
-        experiment = Experiment(deck=deck, ai=AI.naive, turns=turns[-1], repeats=10000)
+        experiment = Experiment(deck=deck, ai=AI.less_naive, turns=turns[-1], repeats=10000)
         results = list(experiment.evaluate([Metric.on_curve]).values())[0]
         plt.plot(turns, results, label=title)
     plt.legend(loc=1)
@@ -49,4 +49,4 @@ with plt.style.context("bmh"):
     plt.xticks(turns)
     plt.yticks([0.0, 0.25, 0.5, 0.75, 1.0])
     plt.ylim([0, 1])
-    plt.savefig('plot3.png')
+    plt.savefig('plot4.png')
