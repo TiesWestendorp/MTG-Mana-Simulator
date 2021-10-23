@@ -30,5 +30,5 @@ with plt.style.context("bmh"):
     plt.xlabel("Turn")
     plt.ylabel("P( mana ≥ turn )")
     plt.xticks(turns)
-    plt.yticks([0.0, 0.2, 0.4, 0.6, 0.8])
+    plt.yticks([0.0, 0.175, 0.35, 0.525, 0.7])
     plt.savefig('plot2.png')
