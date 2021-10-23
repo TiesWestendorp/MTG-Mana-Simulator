@@ -7,7 +7,7 @@ turns = list(range(4, 11))
 
 bounty_of_the_luxa = Card(cost=4, draw_sequence=Sequence([], [0, 1]), mana_sequence=Sequence([0], [0, 1]))
 phyrexian_arena    = Card(cost=3, draw_sequence=Sequence.one.prefixed_by([0]))
-smothering_tithe   = Card(cost=4, gold_sequence=Sequence.repeat(1).prefixed_by([0]))
+smothering_tithe   = Card(cost=4, gold_sequence=Sequence.one.prefixed_by([0]))
 
 land_package = 38*[Card.untapped_land]
 
