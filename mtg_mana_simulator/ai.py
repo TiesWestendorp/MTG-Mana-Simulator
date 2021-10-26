@@ -7,7 +7,7 @@ from typing import Callable, List, Optional, Tuple
 from random import choice, shuffle
 from mtg_mana_simulator.card import Card
 from mtg_mana_simulator.context import Context
-from mtg_mana_simulator.helpers import convexify
+from mtg_mana_simulator.helpers import running_maximum
 
 MayChoose   = Callable[[Context],      Optional[int]]
 MustChoose  = Callable[[Context],      int]
@@ -105,7 +105,7 @@ class AI:
                 raise ValueError
             context.discard_cards(cards)
 
-        return convexify(max_mana)
+        return running_maximum(max_mana)
 
     @staticmethod
     def minimum_land_mulligan(min_cards: int, min_lands: int) -> MayChooseN:
