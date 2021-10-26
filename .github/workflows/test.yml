@@ -28,6 +28,11 @@ jobs:
     - name: Checking type annotations with mypy
       run: |
         mypy $(git ls-files '*.py' | grep -v "examples/" | grep -v "setup.py")
+    - name: Test individual imports
+        find ./mtg_mana_simulator -name '*.py' |\
+        sed 's^\./\(.*\)\.py^\1^' |\
+        sed 's^/^.^g' |\
+        xargs -I fname python -c 'import fname'
     - name: Test with pytest
       run: |
         pytest
