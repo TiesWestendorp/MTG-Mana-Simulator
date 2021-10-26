@@ -7,6 +7,7 @@ from typing import Callable, List, Optional, Tuple
 from random import choice, shuffle
 from mtg_mana_simulator.card import Card
 from mtg_mana_simulator.context import Context
+from mtg_mana_simulator.helpers import convexify
 
 MayChoose   = Callable[[Context],      Optional[int]]
 MustChoose  = Callable[[Context],      int]
@@ -77,8 +78,7 @@ class AI:
             # have decided to not do something this turn, but to postpone it to a later
             # turn. This is relevant to decrease variance when cards like Dark Ritual
             # appear in a deck.
-            max_attainable_mana = max(mana_per_turn[turn], context.max_attainable_mana())
-            mana_per_turn[turn:] = [max_attainable_mana]*(turns-turn)
+            mana_per_turn[turn] = max(mana_per_turn[turn], context.max_attainable_mana())
             while True:
                 playable_cards = context.playable_cards()
                 if len(playable_cards) == 0:
@@ -93,8 +93,7 @@ class AI:
                 # Play the chosen card, and redetermine maximum attainable mana, since
                 # it may have changed after drawing cards.
                 context.play_card("hand", chosen)
-                max_attainable_mana = max(mana_per_turn[turn], context.max_attainable_mana())
-                mana_per_turn[turn:] = [max_attainable_mana]*(turns-turn)
+                mana_per_turn[turn] = max(mana_per_turn[turn], context.max_attainable_mana())
 
             # Discard to maximum hand size
             to_discard = max(0, len(context.zones["hand"])-7)
@@ -103,7 +102,7 @@ class AI:
                 raise ValueError
             context.discard_cards(cards)
 
-        return mana_per_turn
+        return convexify(mana_per_turn)
 
     @staticmethod
     def minimum_land_mulligan(min_cards: int, min_lands: int) -> MayChooseN:

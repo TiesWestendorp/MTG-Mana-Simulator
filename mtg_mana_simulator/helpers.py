@@ -17,3 +17,10 @@ def divisors(number: int) -> List[int]:
 def lcm(number1: int, number2: int) -> int:
     """Compute the least common multiple of two numbers"""
     return number1*number2//gcd(number1, number2)
+
+def convexify(nonconvex: List[int]) -> List[int]:
+    """Transforms a list to be nondecreasing by replacing each element by the running maximum"""
+    if len(nonconvex) == 0:
+        return []
+    running_maximum = nonconvex[0]
+    return [running_maximum := max(running_maximum, item) for item in nonconvex]
