@@ -78,7 +78,7 @@ class AI:
             # have decided to not do something this turn, but to postpone it to a later
             # turn. This is relevant to decrease variance when cards like Dark Ritual
             # appear in a deck.
-            max_mana[turn] = max(max_mana[turn], context.max_mana())
+            max_mana[turn] = context.max_mana()
             while True:
                 playable_cards = context.playable_cards()
                 if len(playable_cards) == 0:
