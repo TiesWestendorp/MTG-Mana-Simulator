@@ -20,7 +20,5 @@ def lcm(number1: int, number2: int) -> int:
 
 def convexify(nonconvex: List[int]) -> List[int]:
     """Transforms a list to be nondecreasing by replacing each element by the running maximum"""
-    if len(nonconvex) == 0:
-        return []
-    running_maximum = nonconvex[0]
+    running_maximum = nonconvex[0] if len(nonconvex) > 0 else 0
     return [running_maximum := max(running_maximum, item) for item in nonconvex]

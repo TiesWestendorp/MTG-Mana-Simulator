@@ -70,6 +70,7 @@ class AI:
         Simulate playing given deck for some number of turns and return maximum mana per turn
         """
         max_mana = turns*[0]
+        max_draw = turns*[0]
         for turn in range(turns):
             context.new_turn()
 
@@ -79,6 +80,7 @@ class AI:
             # turn. This is relevant to decrease variance when cards like Dark Ritual
             # appear in a deck.
             max_mana[turn] = context.max_mana()
+            max_draw[turn] = context.max_draw()
             while True:
                 playable_cards = context.playable_cards()
                 if len(playable_cards) == 0:
@@ -94,6 +96,7 @@ class AI:
                 # it may have changed after drawing cards.
                 context.play_card("hand", chosen)
                 max_mana[turn] = max(max_mana[turn], context.max_mana())
+                max_draw[turn] = max(max_draw[turn], context.max_draw())
 
             # Discard to maximum hand size
             to_discard = max(0, len(context.zones["hand"])-7)

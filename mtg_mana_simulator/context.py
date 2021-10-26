@@ -18,6 +18,7 @@ class Context:
             turn: int = 0,
             mana: int = 0,
             gold: int = 0,
+            draw: int = 0,
             land: int = 0,
             hand: Optional[List[Card]] = None,
             deck: Optional[List[Card]] = None,
@@ -29,6 +30,7 @@ class Context:
         self.turn = turn
         self.mana = mana
         self.gold = gold
+        self.draw = draw
         self.land = land
         self.zones: Dict[str, List[Card]] = {
             "hand":        hand        if hand is not None        else [],
@@ -48,6 +50,7 @@ class Context:
         # Caching behaviours
         self.cached_playable_cards: Optional[List[int]] = None
         self.cached_max_mana: Optional[int] = None
+        self.cached_max_draw: Optional[int] = None
 
     def lands_in_zone(self, zone: str) -> List[Card]:
         """List of all land cards in hand"""
@@ -68,7 +71,7 @@ class Context:
     def new_turn(self) -> None:
         """Does all bookkeeping involved with starting the next turn"""
         self.turn += 1
-        self.draw_cards(self.draw_sequence[0])
+        self.draw  = self.draw_cards(self.draw_sequence[0])
         self.mana  = self.mana_sequence[0]
         self.gold += self.gold_sequence[0]
         self.land  = self.land_sequence[0]
@@ -77,14 +80,16 @@ class Context:
         self.gold_sequence = self.gold_sequence.take(1)
         self.land_sequence = self.land_sequence.take(1)
 
-    def draw_cards(self, number: int) -> None:
+    def draw_cards(self, number: int) -> int:
         """Draw a number of cards"""
         number = min(number, len(self.zones["deck"]))
         if number > 0:
             self.cached_max_mana = None
+            self.cached_max_draw = None
             self.cached_playable_cards = None
             for _ in range(number):
                 self.zones["hand"].append(self.zones["deck"].pop())
+        return number
 
     def discard_cards(self, indices: List[int]) -> None:
         """Discard specified cards"""
@@ -108,7 +113,7 @@ class Context:
         self.land += card.land_sequence[0] - card.land
         self.gold += card.gold_sequence[0] - min(self.gold, max(0, cost-self.mana))
         self.mana += card.mana_sequence[0] - min(self.mana, cost)
-        self.draw_cards(card.draw_sequence[0])
+        self.draw += self.draw_cards(card.draw_sequence[0])
 
         self.mana_sequence += card.mana_sequence.take(1)
         self.draw_sequence += card.draw_sequence.take(1)
@@ -121,6 +126,14 @@ class Context:
             playables = [k for k,card in enumerate(self.zones["hand"]) if card.is_playable(self)]
             self.cached_playable_cards = playables
         return self.cached_playable_cards
+
+    def max_draw(self) -> int:
+        """Maximum attainable card draw based on public information"""
+        if self.cached_max_draw is None:
+            self.cached_max_draw = self.draw
+
+            # Determine the maximum number of draw possible given the cards in hand
+        return self.cached_max_draw
 
     def max_mana(self) -> int:
         """Maximum attainable mana based on public information (lands and net gain)"""
