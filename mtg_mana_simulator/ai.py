@@ -69,7 +69,7 @@ class AI:
         """
         Simulate playing given deck for some number of turns and return maximum mana per turn
         """
-        mana_per_turn = turns*[0]
+        max_mana = turns*[0]
         for turn in range(turns):
             context.new_turn()
 
@@ -78,7 +78,7 @@ class AI:
             # have decided to not do something this turn, but to postpone it to a later
             # turn. This is relevant to decrease variance when cards like Dark Ritual
             # appear in a deck.
-            mana_per_turn[turn] = max(mana_per_turn[turn], context.max_attainable_mana())
+            max_mana[turn] = max(max_mana[turn], context.max_mana())
             while True:
                 playable_cards = context.playable_cards()
                 if len(playable_cards) == 0:
@@ -93,7 +93,7 @@ class AI:
                 # Play the chosen card, and redetermine maximum attainable mana, since
                 # it may have changed after drawing cards.
                 context.play_card("hand", chosen)
-                mana_per_turn[turn] = max(mana_per_turn[turn], context.max_attainable_mana())
+                max_mana[turn] = max(max_mana[turn], context.max_mana())
 
             # Discard to maximum hand size
             to_discard = max(0, len(context.zones["hand"])-7)
@@ -102,7 +102,7 @@ class AI:
                 raise ValueError
             context.discard_cards(cards)
 
-        return convexify(mana_per_turn)
+        return convexify(max_mana)
 
     @staticmethod
     def minimum_land_mulligan(min_cards: int, min_lands: int) -> MayChooseN:

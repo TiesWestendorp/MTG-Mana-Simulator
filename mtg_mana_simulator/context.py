@@ -47,7 +47,7 @@ class Context:
 
         # Caching behaviours
         self.cached_playable_cards: Optional[List[int]] = None
-        self.cached_max_attainable_mana: Optional[int] = None
+        self.cached_max_mana: Optional[int] = None
 
     def lands_in_zone(self, zone: str) -> List[Card]:
         """List of all land cards in hand"""
@@ -81,7 +81,7 @@ class Context:
         """Draw a number of cards"""
         number = min(number, len(self.zones["deck"]))
         if number > 0:
-            self.cached_max_attainable_mana = None
+            self.cached_max_mana = None
             self.cached_playable_cards = None
             for _ in range(number):
                 self.zones["hand"].append(self.zones["deck"].pop())
@@ -122,22 +122,22 @@ class Context:
             self.cached_playable_cards = playables
         return self.cached_playable_cards
 
-    def max_attainable_mana(self) -> int:
+    def max_mana(self) -> int:
         """Maximum attainable mana based on public information (lands and net gain)"""
-        if self.cached_max_attainable_mana is None:
-            max_attainable_mana = self.mana + self.gold
+        if self.cached_max_mana is None:
+            max_mana = self.mana + self.gold
 
             # Suppose you were to play all the lands you could
             if self.land > 0:
                 land_netgain = [card.netgain() for card in self.lands_in_zone("hand")]
-                max_attainable_mana += sum(sorted(land_netgain, reverse=True)[:self.land])
+                max_mana += sum(sorted(land_netgain, reverse=True)[:self.land])
 
             # Suppose you were to play all the nonlands that immediately net mana
             for card in sorted(self.nonlands_in_zone("hand"), key=lambda card: (card.cost or 0)):
                 if card.cost is not None:
-                    max_attainable_mana += max(0, card.netgain())
+                    max_mana += max(0, card.netgain())
                     # Cards are traversed in cost order, so we stop early if we can't pay the cost
-                    if card.cost > max_attainable_mana:
+                    if card.cost > max_mana:
                         break
-            self.cached_max_attainable_mana = max_attainable_mana
-        return self.cached_max_attainable_mana
+            self.cached_max_mana = max_mana
+        return self.cached_max_mana
