@@ -18,7 +18,7 @@ def lcm(number1: int, number2: int) -> int:
     """Compute the least common multiple of two numbers"""
     return number1*number2//gcd(number1, number2)
 
-def running_maximum(input: List[int]) -> List[int]:
+def running_maximum(input_list: List[int]) -> List[int]:
     """Transforms a list to be nondecreasing by replacing each element by the running maximum"""
-    return [running_maximum := item if index == 0 else max(running_maximum, item)
-            for index,item in enumerate(input)]
+    return [maximum := item if index == 0 else max(maximum, item)
+            for index,item in enumerate(input_list)]
