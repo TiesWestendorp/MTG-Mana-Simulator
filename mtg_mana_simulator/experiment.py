@@ -4,6 +4,7 @@ Defines the Experiment class which is the main class of this module.
 
 from typing import Any, Dict, List, Optional
 from random import shuffle
+from scipy.stats import hypergeom
 from mtg_mana_simulator.ai import AI
 from mtg_mana_simulator.card import Card
 from mtg_mana_simulator.metric import Metric
@@ -27,10 +28,7 @@ class Experiment:
 
     def run(self) -> None:
         """Run the experiment"""
-        variance_reduction = None
-        if isinstance(self.options, dict):
-            if 'variance_reduction' in self.options:
-                variance_reduction = self.options['variance_reduction']
+        variance_reduction = self.options.get('variance_reduction')
 
         for iteration in range(self.repeats):
             if variance_reduction == 'antithetic-variates':
@@ -39,6 +37,14 @@ class Experiment:
                     shuffle(self.deck)
                 else:
                     self.deck.reverse()
+            if variance_reduction == 'importance-sampling':
+                # https://en.wikipedia.org/wiki/Importance_sampling
+                cards_without_cost = len([card for card in self.deck if (card.cost or 0) <= 0])
+                if cards_without_cost == 0:
+                    raise ValueError
+                shuffle(self.deck)
+                while len([card for card in self.deck[0:6+self.turns] if (card.cost or 0) <= 0]) == 0:
+                    shuffle(self.deck)
             else:
                 shuffle(self.deck)
 
@@ -49,4 +55,9 @@ class Experiment:
 
     def evaluate(self, metrics: List[Metric]) -> Dict[str, List[Any]]:
         """Evaluate given metrics on the generated traces"""
+        if self.options.get('variance_reduction') == 'importance-sampling':
+            cards_without_cost = len([card for card in self.deck if (card.cost or 0) <= 0])
+            probability = 1 - hypergeom.cdf(0, len(self.deck), cards_without_cost, 6+self.turns)
+            return dict(map(lambda metric: (metric.name, list(map(lambda x: x*probability, metric.compute(self.traces)))), metrics))
+
         return dict(map(lambda metric: (metric.name, metric.compute(self.traces)), metrics))
