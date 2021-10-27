@@ -39,26 +39,32 @@ class Metric:
 
     @staticmethod
     def mean(measure: str) -> "Metric":
+        """Mean of the given measure"""
         return Metric("Mean", measure, lambda t,ms: mean(ms))
 
     @staticmethod
     def median(measure: str) -> "Metric":
+        """Median of the given measure"""
         return Metric("Median", measure, lambda t,ms: int(median(ms)))
 
     @staticmethod
     def mode(measure: str) -> "Metric":
+        """Mode of the given measure"""
         return Metric("Mode", measure, lambda t,ms: mode(ms))
 
     @staticmethod
     def variance(measure: str) -> "Metric":
+        """Variance of the given measure"""
         return Metric("Variance", measure, lambda t,ms: variance(ms))
 
     @staticmethod
     def minimum(measure: str) -> "Metric":
+        """Minimum of the given measure"""
         return Metric("Minimum", measure, lambda t,ms: min(ms))
 
     @staticmethod
     def maximum(measure: str) -> "Metric":
+        """Maximum of the given measure"""
         return Metric("Maximum", measure, lambda t,ms: max(ms))
 
 Metric.identity    = Metric("Identity",     "max_mana", lambda t,ms: (t,ms))

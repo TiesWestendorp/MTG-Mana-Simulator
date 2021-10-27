@@ -73,26 +73,20 @@ class AI:
         trace = Trace(turns)
         for turn in range(turns):
             context.new_turn()
-
-            # Determine maximum attainable mana before cards have been played, and set
-            # the value of all following turns to that value. I.e. the player could
-            # have decided to not do something this turn, but to postpone it to a later
-            # turn. This is relevant to decrease variance when cards like Dark Ritual
-            # appear in a deck.
             trace.update(turn, context)
+
             while True:
+                # Pass the turn if there's no playable cards left
                 playable_cards = context.playable_cards()
                 if len(playable_cards) == 0:
-                    # Pass the turn if there's no playable cards left
                     break
 
+                # Pass the turn if the AI decides to stop playing or makes an invalid move
                 chosen = self.choose(context)
                 if chosen not in playable_cards:
-                    # Pass the turn if the AI decides to stop playing
                     break
 
-                # Play the chosen card, and redetermine maximum attainable mana, since
-                # it may have changed after drawing cards.
+                # Play the chosen card
                 context.play_card("hand", chosen)
                 trace.update(turn, context)
 
@@ -103,8 +97,7 @@ class AI:
                 raise ValueError
             context.discard_cards(cards)
 
-        trace.finalize()
-        return trace
+        return trace.finalize()
 
     @staticmethod
     def minimum_land_mulligan(min_cards: int, min_lands: int) -> MayChooseN:
