@@ -28,19 +28,19 @@ def test_compute():
         (1, [1,1,0,0]),
         (2, [2,2,0,0]),
         (3, [3,2,1,0])]
-    assert similar_lists(Metric.mean.compute(traces()),        [0.5, 1.0,  1.5])
-    assert similar_lists(Metric.median.compute(traces()),      [0, 1, 1])
+    assert similar_lists(Metric.mean("max_mana").compute(traces()),     [0.5, 1.0,  1.5])
+    assert similar_lists(Metric.median("max_mana").compute(traces()),   [0, 1, 1])
     if [version_info[0], version_info[1]] < [3, 8]:
         with raises(StatisticsError):
-            Metric.mode.compute(traces())
+            Metric.mode("max_mana").compute(traces())
     else:
-        assert similar_lists(Metric.mode.compute(traces()),    [1, 2, 3])
-    assert similar_lists(Metric.variance.compute(traces()),    [1/3, 1+1/3, 1+2/3])
-    assert similar_lists(Metric.below_curve.compute(traces()), [0.5, 0.5, 0.75])
-    assert similar_lists(Metric.on_curve.compute(traces()),    [0.5, 0.5, 0.25])
-    assert similar_lists(Metric.above_curve.compute(traces()), [0.0, 0.0, 0.0])
-    assert similar_lists(Metric.minimum.compute(traces()),     [0, 0, 0])
-    assert similar_lists(Metric.maximum.compute(traces()),     [1, 2, 3])
+        assert similar_lists(Metric.mode("max_mana").compute(traces()), [1, 2, 3])
+    assert similar_lists(Metric.variance("max_mana").compute(traces()), [1/3, 1+1/3, 1+2/3])
+    assert similar_lists(Metric.below_curve.compute(traces()),          [0.5, 0.5, 0.75])
+    assert similar_lists(Metric.on_curve.compute(traces()),             [0.5, 0.5, 0.25])
+    assert similar_lists(Metric.above_curve.compute(traces()),          [0.0, 0.0, 0.0])
+    assert similar_lists(Metric.minimum("max_mana").compute(traces()), [0, 0, 0])
+    assert similar_lists(Metric.maximum("max_mana").compute(traces()), [1, 2, 3])
 
 def test_minimum():
     """

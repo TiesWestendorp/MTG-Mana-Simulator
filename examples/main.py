@@ -64,7 +64,7 @@ for (name,deck),ys in zip(decks, values):
 plt.legend(loc=3, prop={'size': 6})
 plt.show()
 
-values = [list(experiment.evaluate([Metric.mean]).values())[0] for experiment in experiments]
+values = [list(experiment.evaluate([Metric.mean("max_mana")]).values())[0] for experiment in experiments]
 for (name,deck),ys in zip(decks, values):
     plt.plot(xs, ys, label=name)
 plt.legend(loc=2, prop={'size': 6})
