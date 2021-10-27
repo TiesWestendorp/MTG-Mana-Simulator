@@ -6,13 +6,14 @@ from sys import version_info
 from statistics import StatisticsError
 from pytest import raises
 from mtg_mana_simulator.metric import Metric
+from mtg_mana_simulator.trace import Trace
 
 def traces():
     """Example traces"""
-    trace1 = [1,2,3]
-    trace2 = [1,2,2]
-    trace3 = [0,0,1]
-    trace4 = [0,0,0]
+    trace1 = Trace(3, max_mana=[1,2,3])
+    trace2 = Trace(3, max_mana=[1,2,2])
+    trace3 = Trace(3, max_mana=[0,0,1])
+    trace4 = Trace(3, max_mana=[0,0,0])
     return [trace1, trace2, trace3, trace4]
 
 def similar_lists(list1, list2, eps=1e-3):
@@ -41,13 +42,14 @@ def test_compute():
     assert similar_lists(Metric.minimum.compute(traces()),     [0, 0, 0])
     assert similar_lists(Metric.maximum.compute(traces()),     [1, 2, 3])
 
-def test_minimum_mana():
+def test_minimum():
     """
-    Test minimum_mana static method
+    Test minimum static method
     """
     for mana,probability in zip([1,2,3,4], [1.0,0.75,0.5,0.25]):
-        metric = Metric.minimum_mana(mana)
-        assert metric.name == f"≥{mana} mana"
+        metric = Metric.above_threshold("max_mana", mana)
+        assert metric.name == f"≥{mana}"
+        assert metric.measure == "max_mana"
         assert metric.func(None, [1,2,3,4]) == probability
 
 def test_percentile():
@@ -55,6 +57,7 @@ def test_percentile():
     Test percentile static method
     """
     for fraction,element in zip([0.25, 0.5, 0.75, 1.0], [1,2,3,4]):
-        metric = Metric.percentile(fraction)
+        metric = Metric.percentile("max_mana", fraction)
         assert metric.name == f"{fraction}th percentile"
+        assert metric.measure == "max_mana"
         assert metric.func(None, [1,2,3,4]) == element

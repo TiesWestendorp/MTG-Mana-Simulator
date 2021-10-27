@@ -8,6 +8,7 @@ from random import choice, shuffle
 from mtg_mana_simulator.card import Card
 from mtg_mana_simulator.context import Context
 from mtg_mana_simulator.helpers import running_maximum
+from mtg_mana_simulator.trace import Trace
 
 MayChoose   = Callable[[Context],      Optional[int]]
 MustChoose  = Callable[[Context],      int]
@@ -65,12 +66,11 @@ class AI:
 
     def run(self, *,
             context: Context,
-            turns: int) -> List[int]:
+            turns: int) -> Trace:
         """
         Simulate playing given deck for some number of turns and return maximum mana per turn
         """
-        max_mana = turns*[0]
-        max_draw = turns*[0]
+        trace = Trace(turns)
         for turn in range(turns):
             context.new_turn()
 
@@ -79,8 +79,7 @@ class AI:
             # have decided to not do something this turn, but to postpone it to a later
             # turn. This is relevant to decrease variance when cards like Dark Ritual
             # appear in a deck.
-            max_mana[turn] = context.max_mana()
-            max_draw[turn] = context.max_draw()
+            trace.update(turn, context)
             while True:
                 playable_cards = context.playable_cards()
                 if len(playable_cards) == 0:
@@ -95,8 +94,7 @@ class AI:
                 # Play the chosen card, and redetermine maximum attainable mana, since
                 # it may have changed after drawing cards.
                 context.play_card("hand", chosen)
-                max_mana[turn] = max(max_mana[turn], context.max_mana())
-                max_draw[turn] = max(max_draw[turn], context.max_draw())
+                trace.update(turn, context)
 
             # Discard to maximum hand size
             to_discard = max(0, len(context.zones["hand"])-7)
@@ -105,7 +103,8 @@ class AI:
                 raise ValueError
             context.discard_cards(cards)
 
-        return running_maximum(max_mana)
+        trace.finalize()
+        return trace
 
     @staticmethod
     def minimum_land_mulligan(min_cards: int, min_lands: int) -> MayChooseN:

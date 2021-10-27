@@ -37,9 +37,9 @@ xs = [turn+1 for turn in range(TURNS)]
 
 experiment = lambda d: Experiment(deck=d, ai=AI, turns=TURNS, repeats=REPEATS, options=OPTIONS)
 experiments = [experiment(deck) for _,deck in decks]
-metrics  = [Metric.minimum_mana(turn+1) for turn in range(TURNS)]
+metrics  = [Metric.above_threshold("max_mana", turn+1) for turn in range(TURNS)]
 metrics += [Metric.on_curve, Metric.above_curve]
-percentiles = [Metric.percentile(p) for p in [0.0,0.25,0.5,0.75,1.0]]
+percentiles = [Metric.percentile("max_mana", p) for p in [0.0,0.25,0.5,0.75,1.0]]
 
 fig, axs = plt.subplots(y,x)
 for i,(ax,(name,_),experiment) in enumerate(zip(axs.flat, decks, experiments)):
