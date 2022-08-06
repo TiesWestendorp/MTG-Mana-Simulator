@@ -26,8 +26,7 @@ class Card:
             mana_sequence: Optional[Sequence] = None,
             draw_sequence: Optional[Sequence] = None,
             gold_sequence: Optional[Sequence] = None,
-            land_sequence: Optional[Sequence] = None,
-            lands_removed: int = 0) -> None:
+            land_sequence: Optional[Sequence] = None) -> None:
         self.name = name
         self.land = land
         self.cost = cost
@@ -35,7 +34,6 @@ class Card:
         self.draw_sequence: Sequence = draw_sequence if draw_sequence is not None else Sequence.zero
         self.gold_sequence: Sequence = gold_sequence if gold_sequence is not None else Sequence.zero
         self.land_sequence: Sequence = land_sequence if land_sequence is not None else Sequence.zero
-        self.lands_removed = lands_removed
 
     def approximate_net_mana_sequence(self) -> Sequence:
         """ (assuming gold is spent immediately)"""

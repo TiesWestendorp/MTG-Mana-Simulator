@@ -59,7 +59,6 @@ def test_untapped_rock():
         assert spell.mana_sequence == Sequence.repeat(mana)
         assert spell.draw_sequence == Sequence.zero
         assert spell.gold_sequence == Sequence.zero
-        assert spell.lands_removed == 0
 
 def test_tapped_rock():
     """
@@ -72,7 +71,6 @@ def test_tapped_rock():
         assert spell.mana_sequence == Sequence.repeat(mana).prefixed_by([0])
         assert spell.draw_sequence == Sequence.zero
         assert spell.gold_sequence == Sequence.zero
-        assert spell.lands_removed == 0
 
 def test_draw_spell():
     """
@@ -85,7 +83,6 @@ def test_draw_spell():
         assert spell.mana_sequence == Sequence.zero
         assert spell.draw_sequence == Sequence.once(mana)
         assert spell.gold_sequence == Sequence.zero
-        assert spell.lands_removed == 0
 
 def test_static_instances():
     """
@@ -94,7 +91,6 @@ def test_static_instances():
     assert Card.untapped_land.name == "Untapped land"
     assert Card.untapped_land.land is True
     assert Card.untapped_land.cost is None
-    assert Card.untapped_land.lands_removed == 0
     assert Card.untapped_land.mana_sequence == Sequence.one
     assert Card.untapped_land.gold_sequence == Sequence.zero
     assert Card.untapped_land.draw_sequence == Sequence.zero
@@ -102,14 +98,12 @@ def test_static_instances():
     assert Card.tapped_land.name == "Tapped land"
     assert Card.tapped_land.land is True
     assert Card.tapped_land.cost is None
-    assert Card.tapped_land.lands_removed == 0
     assert Card.tapped_land.mana_sequence == Sequence([0], [1])
     assert Card.tapped_land.gold_sequence == Sequence.zero
     assert Card.tapped_land.draw_sequence == Sequence.zero
 
     assert Card.cantrip.land is False
     assert Card.cantrip.cost == 1
-    assert Card.cantrip.lands_removed == 0
     assert Card.cantrip.mana_sequence == Sequence.zero
     assert Card.cantrip.gold_sequence == Sequence.zero
     assert Card.cantrip.draw_sequence == Sequence([1], [0])

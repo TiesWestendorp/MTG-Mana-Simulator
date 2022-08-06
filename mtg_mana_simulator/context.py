@@ -60,14 +60,6 @@ class Context:
         """List of all nonland cards in zone"""
         return [card for card in self.zones[zone] if not card.land]
 
-    def remove_lands(self, number: int) -> None:
-        """Randomly removes a number of lands from the deck"""
-        if number > 0:
-            indices = sample([k for k,card in enumerate(self.zones["deck"]) if card.land], number)
-            indices.sort(reverse=True)
-            for index in indices:
-                self.zones["deck"].pop(index)
-
     def new_turn(self) -> None:
         """Does all bookkeeping involved with starting the next turn"""
         self.turn += 1
@@ -108,7 +100,6 @@ class Context:
         self.cached_playable_cards = None
         card = self.zones[zone].pop(index)
 
-        self.remove_lands(card.lands_removed)
         cost = card.cost or 0
         self.land += card.land_sequence[0] - card.land
         self.gold += card.gold_sequence[0] - min(self.gold, max(0, cost-self.mana))
