@@ -53,11 +53,11 @@ class Context:
         self.cached_max_draw: Optional[int] = None
 
     def lands_in_zone(self, zone: str) -> List[Card]:
-        """List of all land cards in hand"""
+        """List of all land cards in zone"""
         return [card for card in self.zones[zone] if card.land]
 
     def nonlands_in_zone(self, zone: str) -> List[Card]:
-        """List of all nonland cards in hand"""
+        """List of all nonland cards in zone"""
         return [card for card in self.zones[zone] if not card.land]
 
     def remove_lands(self, number: int) -> None:
