@@ -4,7 +4,6 @@ solely on a given context, and playing a card modifies a context.
 """
 
 from typing import Dict, List, Optional, TYPE_CHECKING
-from random import sample
 from mtg_mana_simulator.card import Card
 from mtg_mana_simulator.sequence import Sequence
 if TYPE_CHECKING:

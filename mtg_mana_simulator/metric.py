@@ -28,13 +28,13 @@ class Metric:
     @staticmethod
     def above_threshold(measure: str, threshold: int) -> "Metric":
         """Probability of having at least the given amount of the given measure"""
-        func = lambda t,ms: sum(m >= threshold for m in ms)/len(ms)
+        func = lambda _,ms: sum(m >= threshold for m in ms)/len(ms)
         return Metric(f"≥{threshold}", measure, func)
 
     @staticmethod
     def percentile(measure: str, fraction: float) -> "Metric":
         """Percentile score"""
-        func = lambda t,ms: sorted(ms)[min(len(ms), max(0, round(len(ms)*fraction)-1))]
+        func = lambda _,ms: sorted(ms)[min(len(ms), max(0, round(len(ms)*fraction)-1))]
         return Metric(f"{fraction}th percentile", measure, func)
 
     @staticmethod
@@ -68,6 +68,6 @@ class Metric:
         return Metric("Maximum", measure, lambda t,ms: max(ms))
 
 Metric.identity    = Metric("Identity",     "max_mana", lambda t,ms: (t,ms))
-Metric.below_curve = Metric("<'turn' mana", "max_mana", lambda t,ms: sum(m <  t for m in ms)/len(ms))
-Metric.on_curve    = Metric("≥'turn' mana", "max_mana", lambda t,ms: sum(m >= t for m in ms)/len(ms))
-Metric.above_curve = Metric(">'turn' mana", "max_mana", lambda t,ms: sum(m >  t for m in ms)/len(ms))
+Metric.below_curve = Metric("<'turn' mana", "max_mana", lambda t,ms: sum(m< t for m in ms)/len(ms))
+Metric.on_curve    = Metric("≥'turn' mana", "max_mana", lambda t,ms: sum(m>=t for m in ms)/len(ms))
+Metric.above_curve = Metric(">'turn' mana", "max_mana", lambda t,ms: sum(m> t for m in ms)/len(ms))

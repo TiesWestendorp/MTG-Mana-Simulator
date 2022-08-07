@@ -7,7 +7,6 @@ has a mana cost and can be a land or nonland.
 """
 
 from typing import Callable, List, Optional, TYPE_CHECKING
-from random import choice
 from mtg_mana_simulator.sequence import Sequence
 if TYPE_CHECKING:
     from mtg_mana_simulator.context import Context
@@ -35,7 +34,7 @@ class Card:
         self.draw_sequence: Sequence = draw_sequence if draw_sequence is not None else Sequence.zero
         self.gold_sequence: Sequence = gold_sequence if gold_sequence is not None else Sequence.zero
         self.land_sequence: Sequence = land_sequence if land_sequence is not None else Sequence.zero
-        self.transform: List[Callable[[Context], None]] = transform if transform is not None else []
+        self.transform: List[Callable[["Context"], None]] = transform if transform is not None else []
 
     def approximate_net_mana_sequence(self) -> Sequence:
         """ (assuming gold is spent immediately)"""
