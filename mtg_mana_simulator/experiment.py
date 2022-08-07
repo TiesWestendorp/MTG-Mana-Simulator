@@ -24,7 +24,7 @@ class Experiment:
         self.turns   = turns
         self.repeats = repeats
         self.options = options if options is not None else {}
-        self.traces : List[Trace] = self.repeats*[None]
+        self.traces : List["Trace"] = self.repeats*[None]
         self.run()
 
     def run(self) -> None:
