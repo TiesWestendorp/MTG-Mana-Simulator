@@ -25,11 +25,18 @@ class AI:
     less_naive : "AI"
 
     # Default choice strategies
-    default_mulligan : MayChooseN  = lambda _,number: list(range(number))
-    default_choose   : MayChoose   = lambda _: None
-    default_discard  : MustChooseN = lambda _,number: list(range(number))
-
-    randomly_choose : MayChoose = lambda context: choice(context.playable_cards())
+    @staticmethod
+    def default_mulligan(_,number):
+        return list(range(number))
+    @staticmethod
+    def default_choose(_):
+        return None
+    @staticmethod
+    def default_discard(_,number):
+        return list(range(number))
+    @staticmethod
+    def randomly_choose(context):
+        return choice(context.playable_cards())
 
     def __init__(self, *,
             mulligan: Optional[MayChooseN] = None,
@@ -103,6 +110,7 @@ class AI:
         """
         Mulligan to at most some number of cards, whenever having less than some number of lands
         """
+        global func
         def func(context, keepable_cards):
             if keepable_cards <= min_cards or\
                sum(card.land for card in context.zones["hand"]) >= min_lands:
