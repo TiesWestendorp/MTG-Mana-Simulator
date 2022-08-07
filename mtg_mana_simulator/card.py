@@ -16,6 +16,7 @@ Transforms = List[Callable[["Context"], None]]
 class Card:
     """Simplified model of a Magic card"""
 
+    basic_land : "Card"
     untapped_land : "Card"
     tapped_land : "Card"
     cantrip : "Card"

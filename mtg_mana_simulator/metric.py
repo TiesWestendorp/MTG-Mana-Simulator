@@ -2,7 +2,7 @@
 Defines the Metric class which models functions that can be executed on traces.
 """
 
-from typing import Callable, List, TypeVar
+from typing import Any, Callable, List, TypeVar
 from statistics import mean, median, mode, variance
 from mtg_mana_simulator.trace import Trace
 TYPE = TypeVar('TYPE')
@@ -15,7 +15,7 @@ class Metric:
     on_curve : "Metric"
     above_curve : "Metric"
 
-    def __init__(self, name: str, measure: str, func: Callable[[int, Trace], TYPE]) -> None:
+    def __init__(self, name: str, measure: str, func: Callable[[int, List[Any]], TYPE]) -> None:
         self.name = name
         self.measure = measure
         self.func = func

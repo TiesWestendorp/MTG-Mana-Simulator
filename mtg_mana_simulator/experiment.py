@@ -2,11 +2,13 @@
 Defines the Experiment class which is the main class of this module.
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 from random import shuffle
 from mtg_mana_simulator.ai import AI
 from mtg_mana_simulator.card import Card
 from mtg_mana_simulator.metric import Metric
+if TYPE_CHECKING:
+    from mtg_mana_simulator.trace import Trace
 
 class Experiment:
     """Wrapper class for simulating multiple runs"""
@@ -22,7 +24,7 @@ class Experiment:
         self.turns   = turns
         self.repeats = repeats
         self.options = options if options is not None else {}
-        self.traces : List[List[int]] = self.repeats*[[0]]
+        self.traces : List[Trace] = self.repeats*[None]
         self.run()
 
     def run(self) -> None:
