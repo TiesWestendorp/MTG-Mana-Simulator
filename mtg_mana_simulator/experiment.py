@@ -24,7 +24,7 @@ class Experiment:
         self.turns   = turns
         self.repeats = repeats
         self.options = options if options is not None else {}
-        self.traces : List["Trace"] = self.repeats*[None]
+        self.traces : List["Trace"] = []
         self.run()
 
     def run(self) -> None:
@@ -47,7 +47,7 @@ class Experiment:
             context = self.ai.execute_mulligan(self.deck[:]) # deep-copy
             # change API, run is method of context, not of AI
             trace = self.ai.run(context=context, turns=self.turns)
-            self.traces[iteration] = trace
+            self.traces.append(trace)
 
     def evaluate(self, metrics: List[Metric]) -> Dict[str, List[Any]]:
         """Evaluate given metrics on the generated traces"""
