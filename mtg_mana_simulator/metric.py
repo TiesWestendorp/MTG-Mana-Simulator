@@ -28,14 +28,20 @@ class Metric:
     @staticmethod
     def above_threshold(measure: str, threshold: int) -> "Metric":
         """Probability of having at least the given amount of the given measure"""
-        func = lambda _,ms: sum(m >= threshold for m in ms)/len(ms)
-        return Metric(f"≥{threshold}", measure, func)
+        return Metric(
+            f"≥{threshold}",
+            measure,
+            lambda _,ms: sum(m >= threshold for m in ms)/len(ms)
+        )
 
     @staticmethod
     def percentile(measure: str, fraction: float) -> "Metric":
         """Percentile score"""
-        func = lambda _,ms: sorted(ms)[min(len(ms), max(0, round(len(ms)*fraction)-1))]
-        return Metric(f"{fraction}th percentile", measure, func)
+        return Metric(
+            f"{fraction}th percentile",
+            measure,
+            lambda _,ms: sorted(ms)[min(len(ms), max(0, round(len(ms)*fraction)-1))]
+        )
 
     @staticmethod
     def mean(measure: str) -> "Metric":

@@ -11,6 +11,8 @@ from mtg_mana_simulator.sequence import Sequence
 if TYPE_CHECKING:
     from mtg_mana_simulator.context import Context
 
+Transforms = List[Callable[["Context"], None]]
+
 class Card:
     """Simplified model of a Magic card"""
 
@@ -26,7 +28,7 @@ class Card:
             draw_sequence: Optional[Sequence] = None,
             gold_sequence: Optional[Sequence] = None,
             land_sequence: Optional[Sequence] = None,
-            transform: Optional[List[Callable[["Context"], None]]] = None) -> None:
+            transform: Optional[Transforms] = None) -> None:
         self.name = name
         self.land = land
         self.cost = cost
@@ -34,7 +36,7 @@ class Card:
         self.draw_sequence: Sequence = draw_sequence if draw_sequence is not None else Sequence.zero
         self.gold_sequence: Sequence = gold_sequence if gold_sequence is not None else Sequence.zero
         self.land_sequence: Sequence = land_sequence if land_sequence is not None else Sequence.zero
-        self.transform: List[Callable[["Context"], None]] = transform if transform is not None else []
+        self.transform: Transforms = transform if transform is not None else []
 
     def approximate_net_mana_sequence(self) -> Sequence:
         """ (assuming gold is spent immediately)"""
