@@ -3,10 +3,12 @@ Defines the Experiment class which is the main class of this module.
 """
 
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from multiprocessing import Pool, cpu_count
 from random import shuffle
 from mtg_mana_simulator.ai import AI
 from mtg_mana_simulator.card import Card
 from mtg_mana_simulator.metric import Metric
+from tqdm import tqdm
 if TYPE_CHECKING:
     from mtg_mana_simulator.trace import Trace
 
@@ -28,13 +30,19 @@ class Experiment:
         self.run()
 
     def run(self) -> None:
-        """Run the experiment"""
-        for iteration in range(self.repeats):
-            shuffle(self.deck)
-            context = self.ai.execute_mulligan(self.deck[:]) # deep-copy
-            # change API, run is method of context, not of AI
-            trace = self.ai.run(context=context, turns=self.turns)
-            self.traces.append(trace)
+        """Run the experiment multiple times in parallel"""
+        pool = Pool(cpu_count())
+        for t in tqdm(pool.imap(self.run_single, (() for _ in range(self.repeats))), total=self.repeats):
+            self.traces.append(t)
+#        for _ in range(self.repeats):
+#            self.traces.append(self.run_single())
+
+    def run_single(self, i) -> None:
+        """Run the experiment a single time"""
+        deck = self.deck[:] # copy
+        shuffle(deck)
+        context = self.ai.execute_mulligan(deck)
+        return self.ai.run(context=context, turns=self.turns)
 
     def evaluate(self, metrics: List[Metric]) -> Dict[str, List[Any]]:
         """Evaluate given metrics on the generated traces"""
