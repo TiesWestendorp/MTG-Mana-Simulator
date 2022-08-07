@@ -3,18 +3,20 @@ Defines the Card class which models a Magic: the Gathering card's behaviour.
 Currently, the following actions are supported: to gain mana instanteneously as
 well as according to a pattern every turn, to create gold/create gold/draw Cards
 immediately as well as according to a pattern every turn. Additionally, a card
-has a mana cost and can be a land or nonland. Finally, it may cause the removal of
-a number of lands from the remaining deck.
+has a mana cost and can be a land or nonland.
 """
 
-from typing import Optional, TYPE_CHECKING
+from typing import Callable, List, Optional, TYPE_CHECKING
 from mtg_mana_simulator.sequence import Sequence
 if TYPE_CHECKING:
     from mtg_mana_simulator.context import Context
 
+Transforms = List[Callable[["Context"], None]]
+
 class Card:
     """Simplified model of a Magic card"""
 
+    basic_land : "Card"
     untapped_land : "Card"
     tapped_land : "Card"
     cantrip : "Card"
@@ -27,7 +29,7 @@ class Card:
             draw_sequence: Optional[Sequence] = None,
             gold_sequence: Optional[Sequence] = None,
             land_sequence: Optional[Sequence] = None,
-            lands_removed: int = 0) -> None:
+            transform: Optional[Transforms] = None) -> None:
         self.name = name
         self.land = land
         self.cost = cost
@@ -35,7 +37,7 @@ class Card:
         self.draw_sequence: Sequence = draw_sequence if draw_sequence is not None else Sequence.zero
         self.gold_sequence: Sequence = gold_sequence if gold_sequence is not None else Sequence.zero
         self.land_sequence: Sequence = land_sequence if land_sequence is not None else Sequence.zero
-        self.lands_removed = lands_removed
+        self.transform: Transforms = transform if transform is not None else []
 
     def approximate_net_mana_sequence(self) -> Sequence:
         """ (assuming gold is spent immediately)"""
@@ -73,6 +75,7 @@ class Card:
         """Card with given cost that immediately draws given amount of cards"""
         return Card(cost=cost, draw_sequence=Sequence.once(cards))
 
+Card.basic_land    = Card("Basic land",    cost=None, land=True, mana_sequence=Sequence.one)
 Card.untapped_land = Card("Untapped land", cost=None, land=True, mana_sequence=Sequence.one)
 Card.tapped_land   = Card("Tapped land",   cost=None, land=True,
                         mana_sequence=Sequence.one.prefixed_by([0]))

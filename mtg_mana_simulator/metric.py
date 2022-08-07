@@ -2,7 +2,7 @@
 Defines the Metric class which models functions that can be executed on traces.
 """
 
-from typing import Callable, List, TypeVar
+from typing import Any, Callable, List, TypeVar
 from statistics import mean, median, mode, variance
 from mtg_mana_simulator.trace import Trace
 TYPE = TypeVar('TYPE')
@@ -15,7 +15,7 @@ class Metric:
     on_curve : "Metric"
     above_curve : "Metric"
 
-    def __init__(self, name: str, measure: str, func: Callable[[int, Trace], TYPE]) -> None:
+    def __init__(self, name: str, measure: str, func: Callable[[int, List[Any]], TYPE]) -> None:
         self.name = name
         self.measure = measure
         self.func = func
@@ -28,14 +28,20 @@ class Metric:
     @staticmethod
     def above_threshold(measure: str, threshold: int) -> "Metric":
         """Probability of having at least the given amount of the given measure"""
-        func = lambda t,ms: sum(m >= threshold for m in ms)/len(ms)
-        return Metric(f"≥{threshold}", measure, func)
+        return Metric(
+            f"≥{threshold}",
+            measure,
+            lambda _,ms: sum(m >= threshold for m in ms)/len(ms)
+        )
 
     @staticmethod
     def percentile(measure: str, fraction: float) -> "Metric":
         """Percentile score"""
-        func = lambda t,ms: sorted(ms)[min(len(ms), max(0, round(len(ms)*fraction)-1))]
-        return Metric(f"{fraction}th percentile", measure, func)
+        return Metric(
+            f"{fraction}th percentile",
+            measure,
+            lambda _,ms: sorted(ms)[min(len(ms), max(0, round(len(ms)*fraction)-1))]
+        )
 
     @staticmethod
     def mean(measure: str) -> "Metric":
@@ -68,6 +74,6 @@ class Metric:
         return Metric("Maximum", measure, lambda t,ms: max(ms))
 
 Metric.identity    = Metric("Identity",     "max_mana", lambda t,ms: (t,ms))
-Metric.below_curve = Metric("<'turn' mana", "max_mana", lambda t,ms: sum(m <  t for m in ms)/len(ms))
-Metric.on_curve    = Metric("≥'turn' mana", "max_mana", lambda t,ms: sum(m >= t for m in ms)/len(ms))
-Metric.above_curve = Metric(">'turn' mana", "max_mana", lambda t,ms: sum(m >  t for m in ms)/len(ms))
+Metric.below_curve = Metric("<'turn' mana", "max_mana", lambda t,ms: sum(m< t for m in ms)/len(ms))
+Metric.on_curve    = Metric("≥'turn' mana", "max_mana", lambda t,ms: sum(m>=t for m in ms)/len(ms))
+Metric.above_curve = Metric(">'turn' mana", "max_mana", lambda t,ms: sum(m> t for m in ms)/len(ms))

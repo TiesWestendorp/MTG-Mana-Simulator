@@ -4,7 +4,6 @@ solely on a given context, and playing a card modifies a context.
 """
 
 from typing import Dict, List, Optional, TYPE_CHECKING
-from random import sample
 from mtg_mana_simulator.card import Card
 from mtg_mana_simulator.sequence import Sequence
 if TYPE_CHECKING:
@@ -60,14 +59,6 @@ class Context:
         """List of all nonland cards in zone"""
         return [card for card in self.zones[zone] if not card.land]
 
-    def remove_lands(self, number: int) -> None:
-        """Randomly removes a number of lands from the deck"""
-        if number > 0:
-            indices = sample([k for k,card in enumerate(self.zones["deck"]) if card.land], number)
-            indices.sort(reverse=True)
-            for index in indices:
-                self.zones["deck"].pop(index)
-
     def new_turn(self) -> None:
         """Does all bookkeeping involved with starting the next turn"""
         self.turn += 1
@@ -100,25 +91,29 @@ class Context:
         for index in indices:
             self.zones["graveyard"].append(self.zones["hand"].pop(index))
 
-    def play_card(self, zone: str, index: int) -> None:
+    def play_card(self, zone: str, index: int, alternate_cost: Optional[int] = None) -> None:
         """Update the context by playing a given card"""
-        if zone not in self.zones.keys() or index not in self.playable_cards():
-            raise ValueError
 
         self.cached_playable_cards = None
         card = self.zones[zone].pop(index)
+        if alternate_cost is not None:
+            cost = alternate_cost
+        else:
+            cost = card.cost or 0
 
-        self.remove_lands(card.lands_removed)
-        cost = card.cost or 0
+        for transform in card.transform:
+            transform(self)
         self.land += card.land_sequence[0] - card.land
         self.gold += card.gold_sequence[0] - min(self.gold, max(0, cost-self.mana))
         self.mana += card.mana_sequence[0] - min(self.mana, cost)
         self.draw += self.draw_cards(card.draw_sequence[0])
-
         self.mana_sequence += card.mana_sequence.take(1)
         self.draw_sequence += card.draw_sequence.take(1)
         self.gold_sequence += card.gold_sequence.take(1)
         self.land_sequence += card.land_sequence.take(1)
+
+        if self.land < 0 or self.gold < 0 or self.mana < 0:
+            raise ValueError
 
     def playable_cards(self) -> List[int]:
         """Returns a list of indices of the cards that can currently be played"""
