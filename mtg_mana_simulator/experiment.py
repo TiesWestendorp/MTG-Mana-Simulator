@@ -29,21 +29,8 @@ class Experiment:
 
     def run(self) -> None:
         """Run the experiment"""
-        variance_reduction = None
-        if isinstance(self.options, dict):
-            if 'variance_reduction' in self.options:
-                variance_reduction = self.options['variance_reduction']
-
         for iteration in range(self.repeats):
-            if variance_reduction == 'antithetic-variates':
-                # https://en.wikipedia.org/wiki/Antithetic_variates
-                if iteration%2 == 0:
-                    shuffle(self.deck)
-                else:
-                    self.deck.reverse()
-            else:
-                shuffle(self.deck)
-
+            shuffle(self.deck)
             context = self.ai.execute_mulligan(self.deck[:]) # deep-copy
             # change API, run is method of context, not of AI
             trace = self.ai.run(context=context, turns=self.turns)
