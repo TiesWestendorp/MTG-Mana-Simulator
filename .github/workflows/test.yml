@@ -22,9 +22,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install pytest pylint mypy
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Analysing the code with pylint
-      run: |
-        pylint $(git ls-files '*.py' | grep -v "examples/" | grep -v "tests/")
     - name: Checking type annotations with mypy
       run: |
         mypy $(git ls-files '*.py' | grep -v "examples/" | grep -v "setup.py")
@@ -37,3 +34,6 @@ jobs:
     - name: Test with pytest
       run: |
         pytest
+    - name: Analysing the code with pylint
+      run: |
+        pylint $(git ls-files '*.py' | grep -v "examples/" | grep -v "tests/")
