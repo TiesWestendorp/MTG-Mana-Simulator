@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 from mtg_mana_simulator import AI, Card, Experiment, Metric, Sequence
+from mtg_mana_simulator.actions import basic_tapped_into_play, basic_untapped_into_play, basic_to_hand
+from mtg_mana_simulator.repository import Repository
 
 title = "Saffi Eriksdotter"
 cmc = 2
@@ -8,13 +10,11 @@ deck_size = 99
 turns = list(range(1, 11))
 
 avacyns_pilgrim = birds_of_paradise = Card.tapped_rock(1, 1)
-sakura_tribe_elder = Card.tapped_rock(2, 1)
+sakura_tribe_elder = Card("Sakura-Tribe Elder", cost=2, transform=[basic_tapped_into_play])
 burnished_hart = Card(cost=3, mana_sequence=Sequence.repeat(2).prefixed_by([0, -2]))
-yavimaya_granger = Card.tapped_rock(3, 1)
+yavimaya_granger = Card("Yavimaya Granger", cost=3, transform=[basic_tapped_into_play])
 yavimaya_elder = Card(cost=3, draw_sequence=Sequence.once(1).prefixed_by([0]), mana_sequence=Sequence.once(-2).prefixed_by([0]))
-solemn_simulacrum = Card.tapped_rock(4, 1)
-natures_lore = Card.tapped_rock(2, 1)
-cultivate = Card.tapped_rock(3, 1)
+solemn_simulacrum = Card("Solemn Simulacrum", cost=4, transform=[basic_tapped_into_play])
 
 deck = [
     avacyns_pilgrim,
@@ -24,9 +24,9 @@ deck = [
     yavimaya_elder,
     yavimaya_granger,
     solemn_simulacrum,
-    natures_lore,
-    cultivate
-] + 21*[Card.untapped_land] + 14*[Card.tapped_land]
+    Repository["Nature's Lore"],
+    Repository['Cultivate']
+] + 21*[Card.basic_land] + 5*[Card.untapped_land] + 9*[Card.tapped_land]
 deck += (99-len(deck))*[Card.filler]
 
 with plt.style.context("bmh"):
