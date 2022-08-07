@@ -102,7 +102,8 @@ class Context:
         else:
             cost = card.cost or 0
 
-        card.transform(self)
+        for transform in card.transform:
+            transform(self)
         self.land += card.land_sequence[0] - card.land
         self.gold += card.gold_sequence[0] - min(self.gold, max(0, cost-self.mana))
         self.mana += card.mana_sequence[0] - min(self.mana, cost)
@@ -111,6 +112,9 @@ class Context:
         self.draw_sequence += card.draw_sequence.take(1)
         self.gold_sequence += card.gold_sequence.take(1)
         self.land_sequence += card.land_sequence.take(1)
+
+        if self.land < 0 or self.gold < 0 or self.mana < 0:
+            raise ValueError
 
     def playable_cards(self) -> List[int]:
         """Returns a list of indices of the cards that can currently be played"""

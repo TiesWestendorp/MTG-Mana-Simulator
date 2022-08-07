@@ -3,6 +3,7 @@ Defines the Repository dictionary, which maps names to Cards
 """
 
 from collections import defaultdict
+from mtg_mana_simulator.actions import basic_tapped_into_play, basic_untapped_into_play, basic_to_hand
 from mtg_mana_simulator.card import Card
 from mtg_mana_simulator.sequence import Sequence
 
@@ -75,3 +76,6 @@ Repository['Swiftwater Cliffs'] = Card.tapped_land
 Repository['Thornwood Falls'] =   Card.tapped_land
 Repository['Tranquil Cove'] =     Card.tapped_land
 Repository['Wind-Scarred Crag'] = Card.tapped_land
+
+Repository["Nature's Lore"] = Card("Nature's Lore", cost=2, transform=[basic_tapped_into_play])
+Repository['Cultivate'] = Card("Cultivate", cost=3, transform=[basic_tapped_into_play, basic_to_hand])
