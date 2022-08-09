@@ -29,7 +29,7 @@ class Experiment:
 
     def run(self) -> None:
         """Run the experiment"""
-        for iteration in range(self.repeats):
+        for _ in range(self.repeats):
             shuffle(self.deck)
             context = self.ai.execute_mulligan(self.deck[:]) # deep-copy
             # change API, run is method of context, not of AI
