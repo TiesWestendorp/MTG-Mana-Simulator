@@ -3,6 +3,8 @@
 
 This library models simplified "Magic: the Gathering" playthroughs with the purpose of tracking available mana in each turn. This is modeled as experiments that can be run for a given number of turns and repetitions, where some AI agent decides which cards to play in each turn. The cards themselves are heavily simplified, among others, the following attributes are modeled: the generated mana and gold/treasure when played and on every subsequent turn, the card draw attained when played and on every subsequent turn, the cost of playing it, and whether the card is a land or not. After an experiment has run, metrics can be applied to the generated traces, e.g. to find the probability of being on curve or above in each turn.
 
+Also see my blog post on [EDHREC](https://edhrec.com/articles/simultaing-available-mana-beyond-the-hypergeometric-distribution/).
+
 ### Installation
 
 The latest version of this package on PyPI can be installed through `pip` by executing the following command in your console:
